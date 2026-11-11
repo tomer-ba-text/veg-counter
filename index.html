@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="קופה">
+<meta name="theme-color" content="#2F7A45">
+<base target="_blank">
+<title>קופת הירקות</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&family=Secular+One&display=swap">
+<style>
+:root{
+  --desk:#E6EAE2; --paper:#F4F6F1; --card:#FFFFFF; --ink:#1C261E; --ink-2:#5A665C; --ink-3:#8C968D;
+  --line:#DCE2D7; --leaf:#2F7A45; --leaf-ink:#FFFFFF; --leaf-soft:#E2EFE3; --beet:#B0304D; --beet-soft:#F7E3E7;
+  --warn:#8F5A00; --scrim:rgba(18,28,20,.45);
+  --display:'Secular One','Assistant',system-ui,sans-serif; --body:'Assistant',system-ui,-apple-system,'Segoe UI',sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root{
+  --desk:#0B0F0B; --paper:#121812; --card:#1A221B; --ink:#E7ECE5; --ink-2:#A5B0A6; --ink-3:#727E73;
+  --line:#2B362C; --leaf:#5CBB79; --leaf-ink:#0D1A10; --leaf-soft:#1C3323; --beet:#F07B94; --beet-soft:#3A1D25;
+  --warn:#E8B04A; --scrim:rgba(0,0,0,.6); color-scheme:dark}}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--desk);color:var(--ink);font-family:var(--body);font-size:16px}
+button,a.btn{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(--leaf);outline-offset:2px}
+svg{width:20px;height:20px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+.shell{max-width:480px;height:100%;margin:0 auto;background:var(--paper);position:relative;overflow:hidden;
+  padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px)}
+#view,.app{height:100%}
+.app{display:flex;flex-direction:column}
+.center{align-items:center;justify-content:center;gap:6px;padding:24px;text-align:center}
+
+.top{padding:18px 16px 10px;display:flex;align-items:center;gap:10px}
+.ttl{font-family:var(--display);font-size:22px;line-height:1.2}
+.date{color:var(--ink-2);font-size:14px}
+.mark{width:44px;height:44px;border-radius:50%;background:var(--leaf-soft);color:var(--leaf);display:grid;place-items:center;flex:none}
+.mark svg{width:24px;height:24px}
+.mark.lg{width:68px;height:68px;margin-bottom:8px}.mark.lg svg{width:34px;height:34px}
+.status{background:none;border:0;padding:2px 0;font-size:13px;color:var(--ink-2);display:inline-flex;align-items:center;gap:4px}
+.status svg{width:14px;height:14px}
+.status.warn{color:var(--warn);font-weight:700}
+.scroll{flex:1;overflow-y:auto;overscroll-behavior:contain;padding-bottom:12px}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:6px 16px 16px}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 14px}
+.tile .k,.total .k{font-size:13px;color:var(--ink-2)}
+.tile .v{font-family:var(--display);font-size:26px;font-variant-numeric:tabular-nums}
+.sec{display:flex;justify-content:space-between;align-items:center;padding:4px 18px 8px}
+.sec h3{font-size:14px;color:var(--ink-2);font-weight:700;margin:0}
+.link{background:none;border:0;color:var(--leaf);font-weight:700;font-size:15px;padding:6px 0}
+.cat{padding:14px 18px 8px;font-size:13px;font-weight:700;color:var(--ink-2);letter-spacing:.02em}
+.group{margin:0 14px;background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.row{display:flex;align-items:center;gap:10px;padding:9px 12px 9px 10px;border-bottom:1px solid var(--line);min-height:62px}
+.row:last-child{border-bottom:0}
+.rowbtn{flex:1;min-width:0;display:flex;align-items:center;background:none;border:0;padding:4px 2px;text-align:right}
+.main{flex:1;min-width:0;display:block}
+.nm{display:block;font-size:17px;font-weight:600;line-height:1.3}
+.sub{display:block;font-size:13px;color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.amt{font-variant-numeric:tabular-nums;font-weight:700}
+.ibtn{width:42px;height:42px;border-radius:12px;border:0;background:transparent;color:var(--ink-2);display:grid;place-items:center;flex:none}
+.ibtn.danger{color:var(--beet)}
+.empty{text-align:center;padding:32px 24px;color:var(--ink-2)}
+.empty svg{width:28px;height:28px;color:var(--ink-3)}
+.badge{display:inline-block;font-size:12px;font-weight:700;color:var(--beet);background:var(--beet-soft);padding:1px 8px;border-radius:999px}
+.badge.wait{color:var(--warn);background:transparent;padding:0}
+.row.out .nm{color:var(--ink-3)}
+
+.big{margin:10px 14px;height:66px;border-radius:20px;border:0;background:var(--leaf);color:var(--leaf-ink);
+  font-family:var(--display);font-size:23px;display:flex;align-items:center;justify-content:center;gap:10px;flex:none}
+.big svg{width:24px;height:24px;stroke-width:2.6}
+.tabs{display:flex;border-top:1px solid var(--line);background:var(--card);flex:none}
+.tab{flex:1;padding:8px 0 10px;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:12px;font-weight:600;color:var(--ink-3);background:none;border:0}
+.tab.on{color:var(--leaf)}
+
+.search{margin:0 14px 6px;display:flex;align-items:center;gap:8px;background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:0 12px;height:46px;color:var(--ink-3)}
+.search:focus-within{border-color:var(--leaf)}
+.search input{border:0;background:transparent;flex:1;min-width:0;font:inherit;font-size:16px;color:var(--ink);outline:none}
+.prow.sel{background:var(--leaf-soft)}
+.step{display:flex;align-items:center;gap:4px;direction:ltr;flex:none}
+.sb{width:42px;height:42px;border-radius:50%;border:1.5px solid var(--line);background:var(--card);display:grid;place-items:center}
+.sb.plus{background:var(--leaf);border-color:var(--leaf);color:var(--leaf-ink)}
+.sb svg{stroke-width:2.6}
+.qv{min-width:28px;text-align:center;font-weight:700;font-size:18px;font-variant-numeric:tabular-nums}
+.wbtn{flex:none;display:flex;align-items:center;gap:6px;border:1.5px solid var(--leaf);color:var(--leaf);background:var(--card);border-radius:14px;height:42px;padding:0 12px;font-weight:700;font-variant-numeric:tabular-nums}
+.wbtn.has{background:var(--leaf);color:var(--leaf-ink)}
+.wbtn svg{width:18px;height:18px}
+.cbar{margin:8px 14px 12px;height:62px;border-radius:18px;border:0;background:var(--leaf);color:var(--leaf-ink);flex:none;
+  display:flex;align-items:center;justify-content:space-between;padding:0 18px;font-weight:700;font-size:18px;font-variant-numeric:tabular-nums}
+.cbar.empty{background:var(--line);color:var(--ink-2);justify-content:center;font-weight:600;font-size:16px;padding:0}
+
+.total{text-align:center;padding:26px 0 8px}
+.total .v{font-family:var(--display);font-size:50px;font-variant-numeric:tabular-nums;line-height:1.1}
+.foot{padding:8px 14px 14px;display:grid;gap:4px;flex:none}
+.btn{height:56px;border-radius:16px;border:0;width:100%;font-weight:700;font-size:17px;display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none}
+.btn.pri{background:var(--leaf);color:var(--leaf-ink)}
+.btn.ghost{background:transparent;color:var(--ink-2);height:48px}
+.btn.dan{background:var(--beet-soft);color:var(--beet)}
+.btn.out{background:var(--card);border:1.5px solid var(--line);color:var(--ink)}
+.btn.redtext{background:transparent;color:var(--beet);height:48px}
+.btn[aria-busy="true"]{opacity:.6;pointer-events:none}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chipbar{padding:0 16px 12px}
+.chip{padding:8px 16px;border-radius:999px;border:1.5px solid var(--line);background:var(--card);font-weight:600}
+.chip.on{border-color:var(--leaf);background:var(--leaf-soft);color:var(--leaf)}
+.note{margin:0 14px 12px;display:flex;gap:8px;align-items:flex-start;font-size:14px;color:var(--ink-2);background:var(--card);border:1px dashed var(--line);border-radius:12px;padding:10px 12px}
+.note svg{width:18px;height:18px;margin-top:2px}
+.hint{padding:0 18px 4px;font-size:14px;color:var(--ink-2)}
+.addp{display:flex;align-items:center;gap:4px;background:var(--leaf-soft);color:var(--leaf);border:0;border-radius:999px;padding:8px 14px;font-weight:700}
+.addp svg{width:18px;height:18px;stroke-width:2.6}
+.logout{display:block;margin:22px auto 6px;background:none;border:0;color:var(--ink-3);font-size:14px;text-decoration:underline}
+
+.scrim{position:absolute;inset:0;background:var(--scrim);display:flex;flex-direction:column;justify-content:flex-end;z-index:20}
+.sheet{background:var(--card);border-radius:26px 26px 0 0;padding:6px 18px calc(18px + env(safe-area-inset-bottom,0px));max-height:90%;overflow-y:auto}
+.enter{animation:fade .18s ease-out}
+.enter .sheet{animation:up .24s cubic-bezier(.2,.8,.2,1)}
+@keyframes fade{from{opacity:0}}
+@keyframes up{from{transform:translateY(40px);opacity:.4}}
+@media (prefers-reduced-motion:reduce){.enter,.enter .sheet{animation:none}}
+.grab{width:40px;height:5px;border-radius:3px;background:var(--line);margin:4px auto 12px}
+.sh-h{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:6px}
+.sh-p{color:var(--ink-2);margin:4px 0 16px;line-height:1.5}
+.wv{text-align:center;font-family:var(--display);font-size:52px;line-height:1.1;margin-top:8px;font-variant-numeric:tabular-nums}
+.wv .wu{font-family:var(--body);font-size:20px;color:var(--ink-2)}
+.wp{text-align:center;color:var(--ink-2);font-size:18px;min-height:27px;font-variant-numeric:tabular-nums}
+.err{color:var(--beet);font-size:14px;min-height:22px;text-align:center;padding:2px 0}
+.keys{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;direction:ltr;margin-bottom:12px;width:100%}
+.keys.pin{max-width:300px;margin-top:8px}
+.key{height:56px;border-radius:14px;background:var(--card);border:1px solid var(--line);font-size:24px;font-weight:600;display:grid;place-items:center}
+.sheet .key{background:var(--paper);border:0}
+.key:active,.sb:active,.big:active,.btn:active,.cbar:active{transform:scale(.97)}
+.dots{display:flex;gap:16px;margin:18px 0 4px;direction:ltr}
+.dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--ink-3)}
+.dot.on{background:var(--leaf);border-color:var(--leaf)}
+.fl{display:block;font-size:13px;font-weight:600;color:var(--ink-2);margin:14px 0 6px}
+.in{width:100%;height:50px;border:1.5px solid var(--line);border-radius:12px;padding:0 12px;font:inherit;font-size:17px;background:var(--paper);color:var(--ink);outline:none}
+.in:focus{border-color:var(--leaf)}
+.tog{display:flex;align-items:center;gap:10px;margin:16px 0 4px;font-weight:600}
+.tog input{width:22px;height:22px;accent-color:var(--leaf)}
+.xl{overflow-x:auto;border:1px solid var(--line);border-radius:10px;margin:4px 0 6px}
+.xl table{border-collapse:collapse;font-size:12px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.xl th,.xl td{padding:6px 9px;border-bottom:1px solid var(--line);border-left:1px solid var(--line);text-align:right}
+.xl th{background:var(--leaf-soft);color:var(--leaf);font-weight:700}
+.more{font-size:13px;color:var(--ink-2);margin-bottom:12px}
+.toast{position:absolute;left:16px;right:16px;top:calc(14px + env(safe-area-inset-top,0px));background:var(--ink);color:var(--paper);border-radius:14px;padding:12px 14px;font-weight:600;
+  display:flex;gap:8px;align-items:center;z-index:30;opacity:0;transform:translateY(-8px);transition:opacity .2s,transform .2s;pointer-events:none}
+.toast.show{opacity:1;transform:none}
+.toast.bad{background:var(--beet);color:var(--card)}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div id="view"></div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</div>
+
+<script>
+const ICONS={
+  plus:'<path d="M12 5v14M5 12h14"/>',
+  minus:'<path d="M5 12h14"/>',
+  back:'<path d="M5 12h14M13 6l6 6-6 6"/>',
+  trash:'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/>',
+  eye:'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+  eyeOff:'<path d="M3 3l18 18M10.6 5.1A10 10 0 0 1 12 5c6.5 0 10 7 10 7a17 17 0 0 1-3.2 4.2M6.6 6.6C3.8 8.4 2 12 2 12s3.5 7 10 7a9.7 9.7 0 0 0 5.4-1.6M9.9 9.9a3 3 0 0 0 4.2 4.2"/>',
+  search:'<circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/>',
+  home:'<path d="M4 10.5L12 4l8 6.5V20h-5v-6H9v6H4z"/>',
+  leaf:'<path d="M5 19C5 10 10 5 19 5c0 9-5 14-14 14zM5 19l7-7"/>',
+  download:'<path d="M12 4v11M7 10l5 5 5-5M5 20h14"/>',
+  sheet:'<rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 10h16M4 15h16M10 4v16"/>',
+  check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+  lock:'<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
+  x:'<path d="M6 6l12 12M18 6L6 18"/>',
+  backspace:'<path d="M9 6h11v12H9l-6-6z"/><path d="M13 10l4 4M17 10l-4 4"/>',
+  scale:'<path d="M5 20h14l-2-11H7z"/><path d="M12 9V5M9 5h6"/>',
+  basket:'<path d="M3 10h18l-2 10H5z"/><path d="M8 10l4-6 4 6"/>',
+  sync:'<path d="M20 11a8 8 0 0 0-14.9-3M4 13a8 8 0 0 0 14.9 3"/><path d="M5 3v5h5M19 21v-5h-5"/>',
+  wifiOff:'<path d="M3 3l18 18M8.5 16.5a5 5 0 0 1 7 0M5 12.9a10 10 0 0 1 5.2-2.8M19 12.9a10 10 0 0 0-2.2-1.6M2 9a15 15 0 0 1 4.3-2.8M22 9a15 15 0 0 0-11-3.9"/><path d="M12 20h.01"/>'
+};
+const ic=n=>`<svg viewBox="0 0 24 24" aria-hidden="true">${ICONS[n]}</svg>`;
+
+/* Units are stored in the sheet by their Hebrew name, so the manager can edit the sheet directly. */
+const UNITS={
+  'ק״ג':{per:'לק״ג',one:'ק״ג',many:'ק״ג'},
+  'צרור':{per:'לצרור',one:'צרור',many:'צרורות'},
+  'יחידה':{per:'ליחידה',one:'יחידה',many:'יחידות'},
+  'זוג':{per:'לזוג',one:'זוג',many:'זוגות'},
+  'קופסה':{per:'לקופסה',one:'קופסה',many:'קופסאות'}
+};
+const KG='ק״ג';
+const unitOf=u=>UNITS[u]||UNITS['יחידה'];
+
+const r2=n=>Math.round(n*100)/100, r3=n=>Math.round(n*1000)/1000;
+const nf0=new Intl.NumberFormat('he-IL',{maximumFractionDigits:0});
+const nf2=new Intl.NumberFormat('he-IL',{minimumFractionDigits:2,maximumFractionDigits:2});
+const money=n=>{n=r2(n);return (Number.isInteger(n)?nf0.format(n):nf2.format(n))+'₪'};
+const kg=n=>String(r3(n));
+const qtyText=(unit,q)=>unit===KG?kg(q)+' ק״ג':q+' '+(q===1?unitOf(unit).one:unitOf(unit).many);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pad=n=>String(n).padStart(2,'0');
+const hm=ts=>{const d=new Date(ts);return pad(d.getHours())+':'+pad(d.getMinutes())};
+const dayKey=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const offsetDay=off=>{const d=new Date();d.setDate(d.getDate()+off);return dayKey(d)};
+const dmy=day=>day.split('-').reverse().join('.');
+const longDate=ts=>new Intl.DateTimeFormat('he-IL',{weekday:'long',day:'numeric',month:'long'}).format(ts);
+const greet=()=>{const h=new Date().getHours();return h<5?'לילה טוב':h<12?'בוקר טוב':h<17?'צהריים טובים':h<21?'ערב טוב':'לילה טוב'};
+const newUid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+
+/* ---------- storage (per phone; can be empty, so every access is guarded) ---------- */
+const ls={
+  get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},
+  set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}},
+  del(k){try{localStorage.removeItem(k)}catch(e){}}
+};
+let memQueue=[];
+const loadQueue=()=>ls.get('veg.pending',null)||memQueue;
+const saveQueue=q=>{memQueue=q;ls.set('veg.pending',q)};
+
+/* ---------- server ---------- */
+// Served by Apps Script → google.script.run. Served from GitHub Pages → the same functions over doPost.
+const API_URL='https://script.google.com/macros/s/AKfycbxZ1thMjJqcD7nJfnxz5jv4JyktY-i26Y2Fh-EHCxcGpKMkjmpdWGQp9QkL6iev2uBw/exec';
+const viaGoogle=typeof google!=='undefined'&&google.script&&google.script.run;
+function call(fn,...args){
+  if(viaGoogle) return new Promise((res,rej)=>google.script.run.withSuccessHandler(res).withFailureHandler(rej)[fn](...args));
+  return fetch(API_URL,{method:'POST',body:JSON.stringify({fn,args})})
+    .then(r=>{if(!r.ok) throw new Error('network error '+r.status);return r.json()})
+    .then(j=>{if(!j.ok) throw new Error(j.error);return j.result});
+}
+const isPinErr=e=>/\bPIN\b/.test(String(e&&e.message||e));
+const isNetErr=e=>!navigator.onLine||/network|connection|failed to fetch|timeout/i.test(String(e&&e.message||e));
+const errText=e=>isNetErr(e)?'אין חיבור לאינטרנט. נסו שוב':String(e&&e.message||e).replace(/^(Exception|Error):\s*/,'')||'משהו השתבש. נסו שוב';
+
+let PIN=ls.get('veg.pin',null);
+let S={screen:PIN?'loading':'login',lastScreen:'',products:[],orders:[],cart:{},sheet:null,fresh:false,q:'',day:0,range:'today',
+  scroll:{},pinBuf:'',loginErr:'',checking:false,updated:null,offline:false,links:null,busy:false};
+
+const prod=id=>S.products.find(p=>p.id===id);
+const cats=()=>[...new Set(S.products.map(p=>p.cat))];
+
+function mergeOrders(server){
+  const ids=new Set(server.map(o=>o.uid));
+  const q=loadQueue();
+  // An order the server already has but the phone never heard back about.
+  if(q.some(o=>ids.has(o.uid))) saveQueue(q.filter(o=>!ids.has(o.uid)));
+  return server.map(o=>Object.assign({},o,{ts:o.ts||Date.parse(o.day+'T'+o.time),pending:false}))
+    .concat(q.filter(o=>!ids.has(o.uid)).map(o=>Object.assign({},o,{id:null,pending:true})));
+}
+function saveCache(){ls.set('veg.cache',{products:S.products,orders:S.orders.filter(o=>!o.pending),links:S.links,updated:S.updated})}
+
+function apply(d){
+  S.products=d.products; S.orders=mergeOrders(d.orders); S.links={sheet:d.sheetUrl,exp:d.exportUrl};
+  S.updated=Date.now(); S.offline=false; saveCache();
+}
+let refreshing=false;
+function refresh(){
+  if(refreshing||!PIN) return; refreshing=true;
+  call('getData',PIN).then(d=>{
+    apply(d); if(S.screen==='loading') S.screen='home';
+    softRender(); flush();
+  }).catch(e=>{
+    if(isPinErr(e)) return logout('הקוד השתנה. מקלידים את הקוד החדש');
+    S.offline=true;
+    if(S.screen==='loading'){S.screen='home'}
+    softRender();
+  }).finally(()=>{refreshing=false});
+}
+
+let flushing=false;
+async function flush(){
+  if(flushing||!PIN) return;
+  const q=loadQueue(); if(!q.length) return;
+  flushing=true;
+  try{
+    for(const o of q){
+      const r=await call('saveOrder',PIN,{uid:o.uid,ts:o.ts,lines:o.lines});
+      saveQueue(loadQueue().filter(x=>x.uid!==o.uid));
+      const lo=S.orders.find(x=>x.uid===o.uid); if(lo){lo.id=r.id;lo.pending=false}
+    }
+    S.offline=false; saveCache();
+  }catch(e){
+    if(isPinErr(e)){flushing=false;return logout('הקוד השתנה. מקלידים את הקוד החדש')}
+    S.offline=isNetErr(e);
+  }finally{flushing=false;softRender()}
+}
+
+function logout(msg){
+  PIN=null; ls.del('veg.pin'); ls.del('veg.cache');
+  S.screen='login'; S.sheet=null; S.pinBuf=''; S.loginErr=msg||''; render();
+}
+
+/* ---------- cart ---------- */
+const cartLines=()=>Object.entries(S.cart).map(([pid,q])=>{const p=prod(pid);return p&&!p.out&&{p,q,total:r2(p.price*q)}}).filter(Boolean);
+const cartCount=()=>cartLines().reduce((s,l)=>s+(l.p.unit===KG?1:l.q),0);
+const cartTotal=()=>r2(cartLines().reduce((s,l)=>s+l.total,0));
+const itemsText=n=>n===1?'פריט אחד':n+' פריטים';
+const orderSummary=o=>o.lines.map(l=>l.unit===KG?`${l.name} ${kg(l.qty)} ק״ג`:l.qty>1?`${l.name} ×${l.qty}`:l.name).join(', ');
+const orderDay=o=>dayKey(new Date(o.ts));
+const dayOrders=off=>{const k=offsetDay(off);return S.orders.filter(o=>orderDay(o)===k).sort((a,b)=>b.ts-a.ts)};
+const isToday=o=>orderDay(o)===offsetDay(0);
+
+/* ---------- views ---------- */
+const tabs=on=>`<nav class="tabs">
+  <button class="tab ${on==='home'?'on':''}" data-a="go" data-v="home">${ic('home')}<span>בית</span></button>
+  <button class="tab ${on==='products'?'on':''}" data-a="go" data-v="products">${ic('leaf')}<span>מוצרים</span></button></nav>`;
+
+function statusLine(){
+  const n=loadQueue().length;
+  if(n) return `<button class="status warn" data-a="flushNow">${ic('sync')} ${n===1?'הזמנה אחת ממתינה':n+' הזמנות ממתינות'} לשליחה</button>`;
+  if(S.offline) return `<button class="status warn" data-a="refreshNow">${ic('wifiOff')} אין חיבור. מוצגים נתונים שמורים</button>`;
+  return `<button class="status" data-a="refreshNow">${ic('sync')} ${S.updated?'מעודכן '+hm(S.updated):'מתעדכן…'}</button>`;
+}
+
+function orderRow(o){
+  const del=isToday(o)
+    ?`<button class="ibtn danger" data-a="askDel" data-v="${o.uid}" aria-label="מחיקת ההזמנה מ־${hm(o.ts)}">${ic('trash')}</button>`
+    :`<span class="ibtn" title="נעול">${ic('lock')}</span>`;
+  return `<div class="row"><button class="rowbtn" data-a="openOrder" data-v="${o.uid}"><span class="main">
+    <span class="nm amt">${money(o.total)}</span><span class="sub">${o.pending?'<span class="badge wait">ממתינה לשליחה</span> · ':''}${hm(o.ts)} · ${esc(orderSummary(o))}</span></span></button>${del}</div>`;
+}
+
+const V={
+login(){
+  return `<div class="app center"><div class="mark lg">${ic('leaf')}</div><div class="ttl">קופת הירקות</div>
+  <div class="date">מקלידים את קוד החנות</div>
+  <div class="dots" id="dots">${dots()}</div><div class="err" id="lErr">${esc(S.loginErr)}</div>
+  <div class="keys pin">${['1','2','3','4','5','6','7','8','9','','0','del'].map(k=>k===''?'<span></span>'
+    :`<button class="key" data-a="pinKey" data-v="${k}" aria-label="${k==='del'?'מחיקת ספרה':k}">${k==='del'?ic('backspace'):k}</button>`).join('')}</div></div>`;
+},
+loading(){
+  return `<div class="app center"><div class="mark lg">${ic('leaf')}</div><div class="ttl">קופת הירקות</div><div class="date">טוען את המחירון…</div></div>`;
+},
+home(){
+  const t=dayOrders(0), sum=t.reduce((s,o)=>s+o.total,0);
+  return `<div class="app">
+  <header class="top"><div style="flex:1;min-width:0"><div class="ttl">${greet()}</div><div class="date">${longDate(Date.now())}</div>${statusLine()}</div><div class="mark">${ic('leaf')}</div></header>
+  <div class="scroll">
+    <div class="tiles"><div class="tile"><div class="k">הזמנות היום</div><div class="v">${t.length}</div></div>
+    <div class="tile"><div class="k">סה״כ היום</div><div class="v">${money(sum)}</div></div></div>
+    <div class="sec"><h3>הזמנות אחרונות</h3><button class="link" data-a="go" data-v="orders">כל ההזמנות ←</button></div>
+    ${t.length?`<div class="group">${t.slice(0,4).map(orderRow).join('')}</div>`
+      :`<div class="empty">${ic('basket')}<div>עוד לא נמכר כלום היום</div></div>`}
+  </div>
+  <button class="big" data-a="newSale">${ic('plus')} מכירה חדשה</button>
+  ${tabs('home')}</div>`;
+},
+sale(){
+  const n=cartCount();
+  return `<div class="app">
+  <header class="top"><button class="ibtn" data-a="leaveSale" aria-label="חזרה לבית">${ic('back')}</button>
+    <div class="ttl" style="flex:1">מכירה חדשה</div>${n?'<button class="link" data-a="clearCart">ניקוי</button>':''}</header>
+  <label class="search">${ic('search')}<input id="q" type="search" placeholder="חיפוש ירק" value="${esc(S.q)}" autocomplete="off" aria-label="חיפוש ירק"></label>
+  <div class="scroll" id="saleList">${saleList()}</div>
+  <button class="cbar ${n?'':'empty'}" data-a="toSummary">${n?`<span>${itemsText(n)}</span><span>${money(cartTotal())} ←</span>`:'<span>בוחרים ירקות מהרשימה</span>'}</button>
+  </div>`;
+},
+summary(){
+  const L=cartLines();
+  return `<div class="app">
+  <header class="top"><button class="ibtn" data-a="go" data-v="sale" aria-label="חזרה לעריכה">${ic('back')}</button>
+    <div class="ttl" style="flex:1">סיכום חשבון</div><div class="date">${hm(Date.now())}</div></header>
+  <div class="scroll"><div class="group">${L.map(l=>`<div class="row"><span class="main"><span class="nm">${esc(l.p.name)}</span>
+    <span class="sub">${qtyText(l.p.unit,l.q)} × ${money(l.p.price)}</span></span><span class="amt">${money(l.total)}</span></div>`).join('')}</div>
+    <div class="total"><div class="k">לתשלום</div><div class="v">${money(cartTotal())}</div></div></div>
+  <div class="foot"><button class="btn pri" data-a="save">${ic('check')} שמירת הזמנה</button>
+    <button class="btn ghost" data-a="go" data-v="sale">חזרה לעריכה</button></div></div>`;
+},
+orders(){
+  const L=dayOrders(S.day), sum=L.reduce((s,o)=>s+o.total,0);
+  return `<div class="app">
+  <header class="top"><button class="ibtn" data-a="go" data-v="home" aria-label="חזרה לבית">${ic('back')}</button><div class="ttl" style="flex:1">הזמנות</div></header>
+  <div class="chips chipbar"><button class="chip ${S.day===0?'on':''}" data-a="day" data-v="0">היום</button><button class="chip ${S.day===-1?'on':''}" data-a="day" data-v="-1">אתמול</button></div>
+  <div class="scroll">
+    <div class="tiles" style="padding-top:0"><div class="tile"><div class="k">הזמנות</div><div class="v">${L.length}</div></div>
+    <div class="tile"><div class="k">סה״כ</div><div class="v">${money(sum)}</div></div></div>
+    ${S.day!==0?`<div class="note">${ic('lock')}<span>הזמנות מימים קודמים נעולות. אפשר למחוק רק הזמנות של היום.</span></div>`:''}
+    ${L.length?`<div class="group">${L.map(orderRow).join('')}</div>`:`<div class="empty">${ic('basket')}<div>אין הזמנות ביום הזה</div></div>`}
+  </div>
+  <div class="foot"><button class="btn out" data-a="export">${ic('download')} ייצוא לאקסל</button></div></div>`;
+},
+products(){
+  return `<div class="app">
+  <header class="top"><div class="ttl" style="flex:1">מוצרים</div><button class="addp" data-a="editP" data-v="">${ic('plus')} ירק חדש</button></header>
+  <div class="hint">ירק שמסומן ״אזל להיום״ לא מופיע במסך המכירה, וחוזר לבד מחר בבוקר.</div>
+  <div class="scroll">${cats().map(c=>{
+    const ps=S.products.filter(p=>p.cat===c);
+    return `<div class="cat">${esc(c)}</div><div class="group">${ps.map(p=>`<div class="row ${p.out?'out':''}">
+      <button class="rowbtn" data-a="editP" data-v="${esc(p.id)}"><span class="main"><span class="nm">${esc(p.name)}</span>
+      <span class="sub">${p.out?'<span class="badge">אזל להיום</span>':`${money(p.price)} ${unitOf(p.unit).per}`}</span></span></button>
+      <button class="ibtn" data-a="toggleOut" data-v="${esc(p.id)}" aria-label="${p.out?'החזרה למכירה':'סימון אזל להיום'}">${ic(p.out?'eyeOff':'eye')}</button></div>`).join('')}</div>`;
+  }).join('')||`<div class="empty">${ic('leaf')}<div>אין עדיין ירקות. מוסיפים עם ״ירק חדש״</div></div>`}
+  <button class="logout" data-a="logoutAsk">יציאה מהאפליקציה</button></div>
+  ${tabs('products')}</div>`;
+}
+};
+
+function dots(){return [0,1,2,3].map(i=>`<span class="dot ${i<S.pinBuf.length?'on':''}"></span>`).join('')}
+
+function saleList(){
+  const q=S.q.trim();
+  const html=cats().map(c=>{
+    const ps=S.products.filter(p=>p.cat===c&&!p.out&&(!q||p.name.includes(q)));
+    if(!ps.length) return '';
+    return `<div class="cat">${esc(c)}</div><div class="group">${ps.map(p=>{
+      const n=S.cart[p.id]||0, kgItem=p.unit===KG, id=esc(p.id);
+      const ctrl=kgItem
+        ?`<button class="wbtn ${n?'has':''}" data-a="weigh" data-v="${id}">${n?kg(n)+' ק״ג':ic('scale')+' שקילה'}</button>`
+        :`<div class="step"><button class="sb plus" data-a="inc" data-v="${id}" aria-label="עוד ${esc(p.name)}">${ic('plus')}</button>${n?`<span class="qv">${n}</span>
+          <button class="sb" data-a="dec" data-v="${id}" aria-label="פחות ${esc(p.name)}">${ic('minus')}</button>`:''}</div>`;
+      return `<div class="row prow ${n?'sel':''}"><button class="rowbtn" data-a="${kgItem?'weigh':'inc'}" data-v="${id}"><span class="main">
+        <span class="nm">${esc(p.name)}</span><span class="sub">${money(p.price)} ${unitOf(p.unit).per}</span></span></button>${ctrl}</div>`;
+    }).join('')}</div>`;
+  }).join('');
+  return html||`<div class="empty">${ic('search')}<div>${q?`אין ירק בשם ״${esc(q)}״`:'אין ירקות למכירה כרגע'}</div></div>`;
+}
+
+const findOrder=uid=>S.orders.find(x=>x.uid===uid);
+const SH={
+weigh(){
+  const p=prod(S.sheet.pid), had=!!S.cart[p.id];
+  return `<div class="grab"></div><div class="sh-h"><div><div class="ttl">${esc(p.name)}</div><div class="date">${money(p.price)} לק״ג</div></div>
+    <button class="ibtn" data-a="close" aria-label="סגירה">${ic('x')}</button></div>
+  <div class="wv"><span id="wVal">${S.sheet.buf||'0'}</span> <span class="wu">ק״ג</span></div>
+  <div class="wp" id="wPrice">${wPrice()}</div><div class="err" id="wErr"></div>
+  <div class="keys">${['1','2','3','4','5','6','7','8','9','.','0','del'].map(k=>`<button class="key" data-a="key" data-v="${k}" aria-label="${k==='del'?'מחיקת ספרה':k}">${k==='del'?ic('backspace'):k}</button>`).join('')}</div>
+  <button class="btn pri" data-a="weighOk">${had?'עדכון בחשבון':'הוספה לחשבון'}</button>
+  ${had?'<button class="btn redtext" data-a="weighRemove">הסרה מהחשבון</button>':''}`;
+},
+order(){
+  const o=findOrder(S.sheet.uid);
+  return `<div class="grab"></div><div class="sh-h"><div><div class="ttl">${o.pending?'הזמנה ממתינה לשליחה':'הזמנה '+o.id}</div><div class="date">${longDate(o.ts)} · ${hm(o.ts)}</div></div>
+    <button class="ibtn" data-a="close" aria-label="סגירה">${ic('x')}</button></div>
+  <div class="group" style="margin:10px 0">${o.lines.map(l=>`<div class="row"><span class="main"><span class="nm">${esc(l.name)}</span>
+    <span class="sub">${qtyText(l.unit,l.qty)} × ${money(l.price)}</span></span><span class="amt">${money(l.total)}</span></div>`).join('')}</div>
+  <div class="total" style="padding:8px 0 16px"><div class="k">סה״כ</div><div class="v" style="font-size:38px">${money(o.total)}</div></div>
+  ${isToday(o)?`<button class="btn dan" data-a="askDel" data-v="${o.uid}">${ic('trash')} מחיקת ההזמנה</button>`
+    :`<div class="note" style="margin:0">${ic('lock')}<span>הזמנה מיום קודם, אי אפשר למחוק אותה.</span></div>`}`;
+},
+del(){
+  const o=findOrder(S.sheet.uid);
+  return `<div class="grab"></div><div class="ttl">למחוק את ההזמנה?</div>
+  <p class="sh-p">ההזמנה של ${money(o.total)} מ־${hm(o.ts)} תימחק גם מהגיליון, ולא יהיה אפשר להחזיר אותה.</p>
+  <div class="err" id="dErr"></div>
+  <button class="btn dan" data-a="doDel" data-v="${o.uid}">${ic('trash')} מחיקה</button>
+  <button class="btn ghost" data-a="close">ביטול</button>`;
+},
+discard(){
+  return `<div class="grab"></div><div class="ttl">לבטל את המכירה?</div>
+  <p class="sh-p">יש ${itemsText(cartCount())} בחשבון (${money(cartTotal())}). אם יוצאים עכשיו, החשבון נמחק.</p>
+  <button class="btn pri" data-a="close">המשך מכירה</button>
+  <button class="btn redtext" data-a="doDiscard">ביטול המכירה</button>`;
+},
+logout(){
+  return `<div class="grab"></div><div class="ttl">לצאת מהאפליקציה?</div>
+  <p class="sh-p">בכניסה הבאה צריך להקליד שוב את קוד החנות.${loadQueue().length?' יש הזמנות שעוד לא נשלחו, הן יישארו בטלפון ויישלחו אחרי הכניסה.':''}</p>
+  <button class="btn dan" data-a="doLogout">יציאה</button>
+  <button class="btn ghost" data-a="close">ביטול</button>`;
+},
+export(){
+  const ranges=[['today','היום',0],['yesterday','אתמול',-1]];
+  const off=ranges.find(r=>r[0]===S.range)[2];
+  const os=dayOrders(off).slice().sort((a,b)=>a.ts-b.ts);
+  const rows=os.flatMap(o=>o.lines.map(l=>[dmy(orderDay(o)),hm(o.ts),o.id||'…',l.name,kg(l.qty),l.unit,l.price,l.total]));
+  const shown=rows.slice(0,10), L=S.links;
+  return `<div class="grab"></div><div class="sh-h"><div class="ttl">ייצוא לאקסל</div><button class="ibtn" data-a="close" aria-label="סגירה">${ic('x')}</button></div>
+  <div class="chips" style="margin:6px 0 12px">${ranges.map(r=>`<button class="chip ${S.range===r[0]?'on':''}" data-a="range" data-v="${r[0]}">${r[1]}</button>`).join('')}</div>
+  <p class="sh-p" style="margin:0 0 8px">כל הזמנה נרשמת לגיליון, שורה לכל ירק. בגיליון יש גם לשונית ״סיכום״ עם כמה נמכר מכל ירק.</p>
+  ${rows.length?`<div class="xl"><table><thead><tr><th>תאריך</th><th>שעה</th><th>הזמנה</th><th>ירק</th><th>כמות</th><th>יחידה</th><th>מחיר</th><th>סה״כ</th></tr></thead>
+  <tbody>${shown.map(r=>`<tr>${r.map(c=>`<td>${esc(c)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>
+  <div class="more">${rows.length>10?`ועוד ${rows.length-10} שורות · `:''}${os.length} הזמנות · ${money(os.reduce((s,o)=>s+o.total,0))}</div>`
+  :`<div class="empty">אין הזמנות ביום הזה</div>`}
+  ${L?`<div style="display:grid;gap:8px"><a class="btn pri" href="${esc(L.exp)}" target="_blank" rel="noopener">${ic('download')} הורדת קובץ אקסל</a>
+  <a class="btn out" href="${esc(L.sheet)}" target="_blank" rel="noopener">${ic('sheet')} פתיחת הגיליון</a></div>
+  <p class="sh-p" style="font-size:13px;margin:10px 0 0">הקובץ והגיליון נפתחים רק בחשבון Google שיש לו גישה לגיליון.</p>`
+  :`<div class="note" style="margin:0">${ic('wifiOff')}<span>צריך חיבור לאינטרנט כדי להוריד את הקובץ.</span></div>`}`;
+},
+product(){
+  const d=S.sheet.draft, isNew=!S.sheet.pid, cs=cats();
+  if(!cs.includes(d.cat)) cs.push(d.cat);
+  return `<div class="grab"></div><div class="sh-h"><div class="ttl">${isNew?'ירק חדש':'עריכת ירק'}</div><button class="ibtn" data-a="close" aria-label="סגירה">${ic('x')}</button></div>
+  <label class="fl" for="pName">שם</label><input class="in" id="pName" value="${esc(d.name)}" placeholder="עגבניות שרי" autocomplete="off">
+  <label class="fl" for="pPrice">מחיר בשקלים</label><input class="in" id="pPrice" inputmode="decimal" value="${esc(d.price)}" placeholder="12" autocomplete="off">
+  <span class="fl">נמכר לפי</span><div class="chips">${Object.keys(UNITS).map(u=>`<button class="chip ${d.unit===u?'on':''}" data-a="pUnit" data-v="${u}">${u}</button>`).join('')}</div>
+  <span class="fl">קטגוריה</span><div class="chips">${cs.map(c=>`<button class="chip ${d.cat===c?'on':''}" data-a="pCat" data-v="${esc(c)}">${esc(c)}</button>`).join('')}</div>
+  <label class="tog"><input type="checkbox" id="pOut" ${d.out?'checked':''}> אזל להיום</label>
+  <div class="err" id="pErr"></div>
+  <button class="btn pri" data-a="pSave" ${S.busy?'aria-busy="true"':''}>שמירה</button>
+  ${isNew?'':`<button class="btn redtext" data-a="pDel">${S.sheet.armed?'לחיצה נוספת מוחקת את הירק':'מחיקת הירק'}</button>`}`;
+}
+};
+
+function wPrice(){
+  const p=prod(S.sheet.pid), v=parseFloat(S.sheet.buf)||0;
+  return v?'= '+money(p.price*v):'מקלידים את המשקל מהמאזניים';
+}
+function syncDraft(){
+  const n=document.getElementById('pName'); if(!n) return;
+  const d=S.sheet.draft; d.name=n.value; d.price=document.getElementById('pPrice').value; d.out=document.getElementById('pOut').checked;
+}
+
+/* ---------- rendering ---------- */
+const view=document.getElementById('view');
+function render(){
+  if(S.sheet&&S.sheet.type==='product') syncDraft();
+  const sc=view.querySelector('.scroll'); if(sc&&S.lastScreen) S.scroll[S.lastScreen]=sc.scrollTop;
+  view.innerHTML=V[S.screen]()+(S.sheet?`<div class="scrim ${S.fresh?'enter':''}" data-a="scrim"><div class="sheet" role="dialog" aria-modal="true">${SH[S.sheet.type]()}</div></div>`:'');
+  S.fresh=false;
+  const sc2=view.querySelector('.scroll'); if(sc2) sc2.scrollTop=S.scroll[S.screen]||0;
+  S.lastScreen=S.screen;
+}
+// Background updates never redraw mid-sale or under an open sheet, so typing and tapping are never interrupted.
+function softRender(){ if(!S.sheet&&['home','orders','products','loading'].includes(S.screen)) render(); }
+function openSheet(o){S.sheet=o;S.fresh=true;render()}
+function closeSheet(){S.sheet=null;S.busy=false;render()}
+let toastT;
+function toast(msg,bad){
+  const t=document.getElementById('toast'); t.innerHTML=ic(bad?'x':'check')+'<span>'+esc(msg)+'</span>';
+  t.classList.toggle('bad',!!bad); t.classList.add('show');
+  clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),bad?4000:2400);
+}
+function setErr(id,msg){const e=document.getElementById(id); if(e) e.textContent=msg}
+
+function pressKey(k){
+  let b=S.sheet.buf;
+  if(k==='del') b=b.slice(0,-1);
+  else if(k==='.'){ if(!b.includes('.')) b=(b||'0')+'.'; }
+  else { const [i,f]=b.split('.'); if(f!==undefined){ if(f.length<3) b+=k; } else if(b==='0') b=k; else if(i.length<2) b+=k; }
+  S.sheet.buf=b;
+  document.getElementById('wVal').textContent=b||'0';
+  document.getElementById('wPrice').textContent=wPrice();
+  setErr('wErr','');
+}
+
+function pinKey(k){
+  if(S.checking) return;
+  if(k==='del') S.pinBuf=S.pinBuf.slice(0,-1);
+  else if(S.pinBuf.length<4) S.pinBuf+=k;
+  document.getElementById('dots').innerHTML=dots(); setErr('lErr','');
+  if(S.pinBuf.length===4){
+    const pin=S.pinBuf; S.checking=true; setErr('lErr','בודק…');
+    call('getData',pin).then(d=>{
+      PIN=pin; ls.set('veg.pin',pin); S.pinBuf=''; S.loginErr=''; apply(d); S.screen='home'; render(); flush();
+    }).catch(e=>{
+      S.pinBuf=''; S.loginErr=isPinErr(e)?'הקוד לא נכון. נסו שוב':errText(e); render();
+    }).finally(()=>{S.checking=false});
+  }
+}
+
+/* ---------- actions ---------- */
+const A={
+  go(v){S.screen=v;S.sheet=null;if(v==='orders'){S.day=0;S.scroll.orders=0}render()},
+  newSale(){S.cart={};S.q='';S.scroll.sale=0;S.screen='sale';render()},
+  leaveSale(){cartCount()?openSheet({type:'discard'}):A.go('home')},
+  doDiscard(){S.cart={};S.q='';A.go('home')},
+  clearCart(){S.cart={};render()},
+  inc(id){S.cart[id]=(S.cart[id]||0)+1;render()},
+  dec(id){const n=(S.cart[id]||0)-1; if(n>0) S.cart[id]=n; else delete S.cart[id]; render()},
+  weigh(id){openSheet({type:'weigh',pid:id,buf:S.cart[id]?kg(S.cart[id]):''})},
+  key(k){pressKey(k)},
+  pinKey(k){pinKey(k)},
+  weighOk(){
+    const v=parseFloat(S.sheet.buf);
+    if(!(v>0)){setErr('wErr','מקלידים משקל לפני שמוסיפים');return}
+    S.cart[S.sheet.pid]=r3(v); closeSheet();
+  },
+  weighRemove(){delete S.cart[S.sheet.pid];closeSheet()},
+  toSummary(){cartCount()?A.go('summary'):toast('בוחרים לפחות ירק אחד')},
+  save(){
+    const L=cartLines(); if(!L.length) return A.go('sale');
+    const o={uid:newUid(),ts:Date.now(),lines:L.map(l=>({name:l.p.name,unit:l.p.unit,price:l.p.price,qty:l.q,total:l.total})),total:cartTotal()};
+    // Saved on the phone first, then sent, so a weak connection never loses a sale.
+    saveQueue(loadQueue().concat([o]));
+    S.orders.push(Object.assign({id:null,pending:true},o));
+    S.cart={}; S.q=''; S.scroll.home=0; A.go('home'); toast('נשמר · '+money(o.total));
+    flush();
+  },
+  openOrder(uid){if(findOrder(uid)) openSheet({type:'order',uid})},
+  askDel(uid){const fresh=!S.sheet; S.sheet={type:'del',uid}; S.fresh=fresh; render()},
+  doDel(uid,el){
+    const o=findOrder(uid); if(!o) return closeSheet();
+    if(o.pending){
+      saveQueue(loadQueue().filter(x=>x.uid!==uid)); S.orders=S.orders.filter(x=>x.uid!==uid);
+      closeSheet(); toast('ההזמנה נמחקה'); return;
+    }
+    el.setAttribute('aria-busy','true');
+    call('deleteOrder',PIN,uid).then(()=>{
+      S.orders=S.orders.filter(x=>x.uid!==uid); saveCache(); closeSheet(); toast('ההזמנה נמחקה');
+    }).catch(e=>{
+      if(isPinErr(e)) return logout('הקוד השתנה. מקלידים את הקוד החדש');
+      el.removeAttribute('aria-busy'); setErr('dErr',errText(e));
+    });
+  },
+  day(v){S.day=+v;S.scroll.orders=0;render()},
+  export(){S.range=S.day===0?'today':'yesterday';openSheet({type:'export'})},
+  range(v){S.range=v;render()},
+  refreshNow(){refresh();toast('מתעדכן…')},
+  flushNow(){flush();toast('שולח…')},
+  logoutAsk(){openSheet({type:'logout'})},
+  doLogout(){logout('')},
+  toggleOut(id){
+    const p=prod(id); if(!p) return;
+    p.out=!p.out; if(p.out) delete S.cart[id];
+    render(); toast(p.out?`${p.name} סומן ״אזל להיום״`:`${p.name} חזר למכירה`);
+    call('setOut',PIN,id,p.out).then(saveCache).catch(e=>{
+      if(isPinErr(e)) return logout('הקוד השתנה. מקלידים את הקוד החדש');
+      p.out=!p.out; softRender(); toast('לא נשמר: '+errText(e),true);
+    });
+  },
+  editP(id){
+    const p=id?prod(id):null;
+    openSheet({type:'product',pid:id||null,armed:false,draft:p?{name:p.name,price:String(p.price),unit:p.unit,cat:p.cat,out:p.out}
+      :{name:'',price:'',unit:'צרור',cat:cats()[0]||'ירוקים ועלים',out:false}});
+  },
+  pUnit(v){S.sheet.draft.unit=v;render()},
+  pCat(v){S.sheet.draft.cat=v;render()},
+  pSave(){
+    if(S.busy) return;
+    syncDraft();
+    const d=S.sheet.draft, name=d.name.trim(), price=parseFloat(String(d.price).replace(',','.'));
+    if(!name){setErr('pErr','חסר שם לירק');return}
+    if(!(price>0)){setErr('pErr','מחיר צריך להיות מספר גדול מ־0');return}
+    const old=S.sheet.pid&&prod(S.sheet.pid);
+    const msg=!old?`${name} נוסף`:old.price!==r2(price)?'נשמר. המחיר החדש חל על מכירות מעכשיו':'נשמר';
+    S.busy=true; render();
+    call('saveProduct',PIN,{id:S.sheet.pid,name,price:r2(price),unit:d.unit,cat:d.cat,out:d.out}).then(list=>{
+      S.products=list; saveCache(); closeSheet(); toast(msg);
+    }).catch(e=>{
+      if(isPinErr(e)) return logout('הקוד השתנה. מקלידים את הקוד החדש');
+      S.busy=false; render(); setErr('pErr',errText(e));
+    });
+  },
+  pDel(){
+    if(S.busy) return;
+    if(!S.sheet.armed){S.sheet.armed=true;render();return}
+    const id=S.sheet.pid; S.busy=true; render();
+    call('deleteProduct',PIN,id).then(()=>{
+      S.products=S.products.filter(p=>p.id!==id); delete S.cart[id]; saveCache(); closeSheet(); toast('הירק נמחק');
+    }).catch(e=>{
+      if(isPinErr(e)) return logout('הקוד השתנה. מקלידים את הקוד החדש');
+      S.busy=false; render(); setErr('pErr',errText(e));
+    });
+  },
+  close(){closeSheet()}
+};
+
+view.addEventListener('click',e=>{
+  const el=e.target.closest('[data-a]'); if(!el) return;
+  const a=el.dataset.a;
+  if(a==='scrim'){ if(e.target===el) closeSheet(); return; }
+  A[a]&&A[a](el.dataset.v,el);
+});
+view.addEventListener('input',e=>{
+  if(e.target.id==='q'){S.q=e.target.value;const l=document.getElementById('saleList');l.innerHTML=saleList();l.scrollTop=0}
+  if(e.target.id==='pName'||e.target.id==='pPrice') setErr('pErr','');
+});
+document.addEventListener('keydown',e=>{
+  if(S.screen==='login'&&!S.sheet){
+    if(/^[0-9]$/.test(e.key)) pinKey(e.key); else if(e.key==='Backspace') pinKey('del'); else return;
+    e.preventDefault(); return;
+  }
+  if(!S.sheet) return;
+  if(e.key==='Escape'){closeSheet();return}
+  if(S.sheet.type!=='weigh') return;
+  if(/^[0-9]$/.test(e.key)) pressKey(e.key);
+  else if(e.key==='.'||e.key===',') pressKey('.');
+  else if(e.key==='Backspace') pressKey('del');
+  else if(e.key==='Enter') A.weighOk();
+  else return;
+  e.preventDefault();
+});
+window.addEventListener('online',()=>{flush();refresh()});
+document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible'&&PIN){refresh();flush()} });
+setInterval(()=>{ if(PIN&&loadQueue().length) flush() },20000);
+
+/* ---------- start ---------- */
+if(PIN){
+  const c=ls.get('veg.cache',null);
+  if(c){S.products=c.products;S.orders=mergeOrders(c.orders);S.links=c.links;S.updated=c.updated;S.screen='home'}
+  render(); refresh();
+} else render();
+</script>
+</body>
+</html>
