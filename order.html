@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#2F7A45">
+<title>הזמנה לאיסוף</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&family=Secular+One&display=swap">
+<style>
+:root{
+  --desk:#E6EAE2; --paper:#F4F6F1; --card:#FFFFFF; --ink:#1C261E; --ink-2:#5A665C; --ink-3:#8C968D;
+  --line:#DCE2D7; --leaf:#2F7A45; --leaf-ink:#FFFFFF; --leaf-soft:#E2EFE3; --beet:#B0304D; --beet-soft:#F7E3E7; --warn:#8F5A00;
+  --scrim:rgba(18,28,20,.45);
+  --display:'Secular One','Assistant',system-ui,sans-serif; --body:'Assistant',system-ui,-apple-system,'Segoe UI',sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root{
+  --desk:#0B0F0B; --paper:#121812; --card:#1A221B; --ink:#E7ECE5; --ink-2:#A5B0A6; --ink-3:#727E73;
+  --line:#2B362C; --leaf:#5CBB79; --leaf-ink:#0D1A10; --leaf-soft:#1C3323; --beet:#F07B94; --beet-soft:#3A1D25; --warn:#E8B04A;
+  --scrim:rgba(0,0,0,.6); color-scheme:dark}}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--desk);color:var(--ink);font-family:var(--body);font-size:16px}
+button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--leaf);outline-offset:2px}
+svg{width:20px;height:20px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.shell{max-width:480px;height:100%;margin:0 auto;background:var(--paper);position:relative;overflow:hidden;
+  padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px)}
+#view,.app{height:100%}
+.app{display:flex;flex-direction:column}
+.center{align-items:center;justify-content:center;gap:8px;padding:28px;text-align:center;color:var(--ink-2);line-height:1.5}
+.center b{color:var(--ink);font-size:19px}
+.top{padding:18px 16px 10px;display:flex;align-items:center;gap:10px}
+.ttl{font-family:var(--display);font-size:22px;line-height:1.2}
+.date{color:var(--ink-2);font-size:14px}
+.mark{width:44px;height:44px;border-radius:50%;background:var(--leaf-soft);color:var(--leaf);display:grid;place-items:center;flex:none}
+.mark svg{width:24px;height:24px}
+.mark.lg{width:64px;height:64px}.mark.lg svg{width:32px;height:32px;stroke-width:2.6}
+.scroll{flex:1;overflow-y:auto;overscroll-behavior:contain;padding-bottom:12px}
+.cat{padding:14px 18px 8px;font-size:13px;font-weight:700;color:var(--ink-2);letter-spacing:.02em}
+.group{margin:0 14px;background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.row{display:flex;align-items:center;gap:10px;padding:9px 12px 9px 10px;border-bottom:1px solid var(--line);min-height:62px}
+.row:last-child{border-bottom:0}
+.row.sel{background:var(--leaf-soft)}
+.main{flex:1;min-width:0;display:block}
+.nm{display:block;font-size:17px;font-weight:600;line-height:1.3}
+.sub{display:block;font-size:13px;color:var(--ink-2)}
+.amt{font-variant-numeric:tabular-nums;font-weight:700}
+.ibtn{width:42px;height:42px;border-radius:12px;border:0;background:transparent;color:var(--ink-2);display:grid;place-items:center;flex:none}
+.link{background:none;border:0;color:var(--leaf);font-weight:700;font-size:15px;padding:6px 0}
+.step{display:flex;align-items:center;gap:4px;direction:ltr;flex:none}
+.sb{width:42px;height:42px;border-radius:50%;border:1.5px solid var(--line);background:var(--card);display:grid;place-items:center}
+.sb.plus{background:var(--leaf);border-color:var(--leaf);color:var(--leaf-ink)}
+.sb svg{stroke-width:2.6}
+.qv{min-width:30px;text-align:center;font-weight:700;font-size:17px;font-variant-numeric:tabular-nums}
+.qv small{display:block;font-size:11px;font-weight:600;color:var(--ink-2);line-height:1}
+.cbar{margin:8px 14px 12px;min-height:62px;border-radius:18px;border:0;background:var(--leaf);color:var(--leaf-ink);flex:none;
+  display:flex;align-items:center;justify-content:space-between;padding:0 18px;font-weight:700;font-size:18px;font-variant-numeric:tabular-nums}
+.cbar.empty{background:var(--line);color:var(--ink-2);justify-content:center;font-weight:600;font-size:16px;padding:0}
+.foot{padding:8px 14px 14px;display:grid;gap:4px;flex:none}
+.btn{min-height:54px;border-radius:16px;border:0;width:100%;font-weight:700;font-size:17px;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn.pri{background:var(--leaf);color:var(--leaf-ink)}
+.btn.out{background:var(--card);border:1.5px solid var(--line);color:var(--ink)}
+.btn.ghost{background:transparent;color:var(--ink-2);min-height:46px}
+.btn.redtext{background:transparent;color:var(--beet);min-height:46px}
+.btn.dan{background:var(--beet-soft);color:var(--beet)}
+.btn[aria-busy="true"]{opacity:.6;pointer-events:none}
+.btn:active,.sb:active,.cbar:active{transform:scale(.97)}
+.banner{margin:4px 14px 10px;border-radius:16px;padding:12px 14px;display:flex;gap:10px;align-items:flex-start;background:var(--leaf-soft);color:var(--leaf)}
+.banner.closed{background:var(--beet-soft);color:var(--beet)}
+.banner b{display:block;font-size:16px}
+.banner span{font-size:14px;color:var(--ink-2)}
+.banner svg{margin-top:2px}
+.form{padding:0 16px}
+.fl{display:block;font-size:13px;font-weight:600;color:var(--ink-2);margin:14px 0 6px}
+.in{width:100%;height:50px;border:1.5px solid var(--line);border-radius:12px;padding:0 12px;font:inherit;font-size:17px;background:var(--card);color:var(--ink);outline:none}
+textarea.in{height:70px;padding:10px 12px;resize:none}
+.in:focus{border-color:var(--leaf)}
+.err{color:var(--beet);font-size:14px;min-height:22px;text-align:center;padding:2px 0}
+.total{text-align:center;padding:18px 0 4px}
+.total .k,.total .n{font-size:13px;color:var(--ink-2)}
+.total .v{font-family:var(--display);font-size:42px;font-variant-numeric:tabular-nums;line-height:1.1}
+.ok{text-align:center;padding:18px 20px 8px}
+.ok .mark{margin:0 auto 10px}
+.badge{display:inline-block;font-size:12px;font-weight:700;padding:2px 9px;border-radius:999px}
+.b-wait{color:var(--warn);border:1.5px solid var(--warn)}
+.b-done{color:var(--leaf);background:var(--leaf-soft)}
+.b-off{color:var(--beet);background:var(--beet-soft)}
+.contact{margin:6px 14px 10px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.contact b{display:block;font-size:18px}
+.contact span{font-size:14px;color:var(--ink-2);direction:ltr;display:inline-block}
+.plink{margin:10px 14px;border:1px dashed var(--line);background:var(--card);border-radius:14px;padding:10px 12px;font-size:14px;color:var(--ink-2)}
+.plink code{display:block;direction:ltr;text-align:left;color:var(--ink);font-size:13px;margin-top:4px;word-break:break-all}
+.note{margin:0 14px 12px;font-size:14px;color:var(--ink-2);background:var(--card);border:1px dashed var(--line);border-radius:12px;padding:10px 12px;display:flex;gap:8px;align-items:center}
+.scrim{position:absolute;inset:0;background:var(--scrim);display:flex;flex-direction:column;justify-content:flex-end;z-index:20}
+.sheet{background:var(--card);border-radius:26px 26px 0 0;padding:6px 18px calc(18px + env(safe-area-inset-bottom,0px))}
+.grab{width:40px;height:5px;border-radius:3px;background:var(--line);margin:4px auto 12px}
+.sh-p{color:var(--ink-2);margin:4px 0 16px;line-height:1.5}
+.toast{position:absolute;left:16px;right:16px;top:calc(14px + env(safe-area-inset-top,0px));background:var(--ink);color:var(--paper);border-radius:14px;padding:12px 14px;font-weight:600;
+  display:flex;gap:8px;align-items:center;z-index:30;opacity:0;transform:translateY(-8px);transition:opacity .2s,transform .2s;pointer-events:none}
+.toast.show{opacity:1;transform:none}
+.toast.bad{background:var(--beet);color:var(--card)}
+</style>
+</head>
+<body>
+<div class="shell"><div id="view"></div><div class="toast" id="toast" role="status" aria-live="polite"></div></div>
+<script>
+const API_URL='https://script.google.com/macros/s/AKfycbxZ1thMjJqcD7nJfnxz5jv4JyktY-i26Y2Fh-EHCxcGpKMkjmpdWGQp9QkL6iev2uBw/exec';
+const ICONS={
+  plus:'<path d="M12 5v14M5 12h14"/>', minus:'<path d="M5 12h14"/>', back:'<path d="M5 12h14M13 6l6 6-6 6"/>',
+  leaf:'<path d="M5 19C5 10 10 5 19 5c0 9-5 14-14 14zM5 19l7-7"/>', check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>', x:'<path d="M6 6l12 12M18 6L6 18"/>',
+  clock:'<circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/>', lock:'<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
+  bag:'<path d="M5 8h14l-1 12H6z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/>', edit:'<path d="M4 20h4L19 9l-4-4L4 16z"/>',
+  sync:'<path d="M20 11a8 8 0 0 0-14.9-3M4 13a8 8 0 0 0 14.9 3"/><path d="M5 3v5h5M19 21v-5h-5"/>'
+};
+const ic=n=>`<svg viewBox="0 0 24 24" aria-hidden="true">${ICONS[n]}</svg>`;
+const KG='ק״ג';
+const UNITS={'ק״ג':{per:'לק״ג',one:'ק״ג',many:'ק״ג'},'צרור':{per:'לצרור',one:'צרור',many:'צרורות'},'יחידה':{per:'ליחידה',one:'יחידה',many:'יחידות'},'זוג':{per:'לזוג',one:'זוג',many:'זוגות'},'קופסה':{per:'לקופסה',one:'קופסה',many:'קופסאות'}};
+const unitOf=u=>UNITS[u]||UNITS['יחידה'];
+const r2=n=>Math.round(n*100)/100, r3=n=>Math.round(n*1000)/1000;
+const nf0=new Intl.NumberFormat('he-IL',{maximumFractionDigits:0}), nf2=new Intl.NumberFormat('he-IL',{minimumFractionDigits:2,maximumFractionDigits:2});
+const money=n=>{n=r2(n);return (Number.isInteger(n)?nf0.format(n):nf2.format(n))+'₪'};
+const kg=n=>String(r3(n));
+const qtyText=(unit,q)=>unit===KG?'בערך '+kg(q)+' ק״ג':q+' '+(q===1?unitOf(unit).one:unitOf(unit).many);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pad=n=>String(n).padStart(2,'0');
+const dayName=d=>new Intl.DateTimeFormat('he-IL',{weekday:'long'}).format(d);
+const dm=d=>d.getDate()+'.'+(d.getMonth()+1);
+const parseDay=s=>{const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)};
+const roundPick=r=>{const d=parseDay(r.pick);return `${dayName(d)} ${dm(d)}, ${r.from}-${r.to}`};
+const closeText=ts=>{const d=new Date(ts);if(!d.getHours()&&!d.getMinutes()){const p=new Date(ts-1);return `${dayName(p)} ${dm(p)} ב-24:00`}return `${dayName(d)} ${dm(d)} ב-${d.getHours()}:${pad(d.getMinutes())}`};
+const ls={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+
+function call(fn,...args){
+  return fetch(API_URL,{method:'POST',body:JSON.stringify({fn,args})})
+    .then(r=>{if(!r.ok) throw new Error('network error '+r.status);return r.json()})
+    .then(j=>{if(!j.ok) throw new Error(j.error);return j.result});
+}
+const errText=e=>!navigator.onLine||/network|failed to fetch/i.test(String(e&&e.message))?'אין חיבור לאינטרנט. נסו שוב':String(e&&e.message||e).replace(/^(Exception|Error):\s*/,'');
+
+/* Link forms: order.html#<roundId> opens the round; order.html#o=<uid> is a customer's own order. */
+const me=ls.get('veg.customer',{name:'',phone:''});
+let S={screen:'loading',round:null,products:[],order:null,cart:{},name:me.name,phone:me.phone,note:'',editing:false,sheet:null,busy:false,msg:''};
+
+function boot(){
+  const h=decodeURIComponent(location.hash.slice(1));
+  if(h.startsWith('o=')) return loadOrder(h.slice(2));
+  if(!h){S.screen='msg';S.msg='הקישור לא שלם. בקשו מהחנות קישור חדש.';return render()}
+  const mine=ls.get('veg.my.'+h,null);
+  if(mine) return loadOrder(mine,h);
+  loadRound(h);
+}
+function loadRound(id){
+  S.screen='loading';render();
+  call('pubRound',id).then(d=>{
+    if(d.missing){S.screen='msg';S.msg='הקישור הזה לא קיים. בקשו מהחנות קישור חדש.';return render()}
+    S.round=d.round;S.products=d.products;S.screen=d.round.closed?'closed':'start';render();
+  }).catch(e=>{S.screen='msg';S.msg=errText(e);render()});
+}
+function loadOrder(uid,fallbackRound){
+  S.screen='loading';render();
+  call('pubGet',uid).then(d=>{
+    if(d.missing){ if(fallbackRound) return loadRound(fallbackRound); S.screen='msg';S.msg='ההזמנה לא נמצאה.';return render()}
+    S.order=d.order;S.round=d.round;S.screen='done';
+    if(location.hash!=='#o='+uid) history.replaceState(null,'','#o='+uid);
+    render();
+  }).catch(e=>{S.screen='msg';S.msg=errText(e);render()});
+}
+
+const head=(t,back)=>`<header class="top">${back?`<button class="ibtn" data-a="go" data-v="${back}" aria-label="חזרה">${ic('back')}</button>`:`<div class="mark">${ic('leaf')}</div>`}<div style="flex:1"><div class="ttl">${t}</div>${S.round?`<div class="date">איסוף ב${roundPick(S.round)}</div>`:''}</div></header>`;
+const cats=()=>[...new Set(S.products.map(p=>p.cat))];
+const cartLines=()=>Object.entries(S.cart).map(([pid,q])=>{const p=S.products.find(x=>x.id===pid);return p&&{p,q}}).filter(Boolean);
+const estOf=L=>r2(L.reduce((s,l)=>s+l.p.price*l.q,0));
+
+const V={
+loading(){return `<div class="app center"><div class="mark lg">${ic('leaf')}</div><div>טוען…</div></div>`},
+msg(){return `<div class="app center"><div class="mark lg">${ic('leaf')}</div><b>הזמנה לאיסוף</b><div>${esc(S.msg)}</div><button class="btn out" style="max-width:240px;margin-top:8px" data-a="retry">ניסיון נוסף</button></div>`},
+closed(){return `<div class="app">${head('הזמנה לאיסוף')}<div class="banner closed">${ic('lock')}<div><b>ההזמנות לסבב הזה נסגרו</b><span>החנות תשלח קישור חדש בסבב הבא.</span></div></div></div>`},
+start(){
+  return `<div class="app">
+  <header class="top"><div class="mark">${ic('leaf')}</div><div style="flex:1"><div class="ttl">הזמנה לאיסוף</div><div class="date">ירקות טריים מהחווה</div></div></header>
+  <div class="banner">${ic('clock')}<div><b>איסוף ב${roundPick(S.round)}</b><span>מזמינים עד ${closeText(S.round.closeTs)}. משלמים באיסוף.</span></div></div>
+  <div class="scroll"><div class="form">
+    <label class="fl" for="cName">שם</label><input class="in" id="cName" value="${esc(S.name)}" placeholder="נועה ישראלי" autocomplete="name">
+    <label class="fl" for="cPhone">טלפון</label><input class="in" id="cPhone" value="${esc(S.phone)}" placeholder="050-1234567" inputmode="tel" autocomplete="tel" dir="ltr" style="text-align:right">
+    <div class="err" id="cErr"></div>
+  </div></div>
+  <div class="foot"><button class="btn pri" data-a="start">המשך לבחירת ירקות ←</button></div></div>`;
+},
+shop(){
+  const L=cartLines(), n=L.length;
+  return `<div class="app">${head(S.editing?'שינוי ההזמנה':'שלום '+esc(S.name.split(' ')[0]),S.editing?'done':'start')}
+  <div class="scroll">${cats().map(c=>`<div class="cat">${esc(c)}</div><div class="group">${S.products.filter(p=>p.cat===c).map(p=>{
+    const q=S.cart[p.id]||0, isKg=p.unit===KG, id=esc(p.id);
+    return `<div class="row ${q?'sel':''}"><div class="main"><span class="nm">${esc(p.name)}</span><span class="sub">${money(p.price)} ${unitOf(p.unit).per}${isKg?' · כמות משוערת':''}</span></div>
+      <div class="step"><button class="sb plus" data-a="inc" data-v="${id}" aria-label="עוד ${esc(p.name)}">${ic('plus')}</button>${q?`<span class="qv">${isKg?kg(q)+'<small>ק״ג</small>':q}</span>
+      <button class="sb" data-a="dec" data-v="${id}" aria-label="פחות ${esc(p.name)}">${ic('minus')}</button>`:''}</div></div>`}).join('')}</div>`).join('')}</div>
+  <button class="cbar ${n?'':'empty'}" data-a="next">${n?`<span>${n===1?'ירק אחד':n+' ירקות'}</span><span>בערך ${money(estOf(L))} ←</span>`:'<span>בוחרים ירקות מהרשימה</span>'}</button></div>`;
+},
+details(){
+  const L=cartLines(), hasKg=L.some(l=>l.p.unit===KG);
+  return `<div class="app">${head('פרטים ואישור','shop')}
+  <div class="scroll">
+    <div class="group">${L.map(l=>`<div class="row"><span class="main"><span class="nm">${esc(l.p.name)}</span><span class="sub">${qtyText(l.p.unit,l.q)}</span></span><span class="amt">${l.p.unit===KG?'~':''}${money(l.p.price*l.q)}</span></div>`).join('')}</div>
+    <div class="total"><div class="k">${hasKg?'בערך':'סה״כ'}</div><div class="v">${money(estOf(L))}</div><div class="n">${hasKg?'המחיר הסופי לפי שקילה, ':''}משלמים באיסוף</div></div>
+    <div class="contact"><div><b>${esc(S.name)}</b><span>${esc(S.phone)}</span></div><button class="link" data-a="go" data-v="start">שינוי</button></div>
+    <div class="form"><label class="fl" for="cNote">הערה (לא חובה)</label><textarea class="in" id="cNote" placeholder="אם אין רוקט, אפשר מיזונה">${esc(S.note)}</textarea><div class="err" id="sErr"></div></div>
+  </div>
+  <div class="foot"><button class="btn pri" data-a="send" ${S.busy?'aria-busy="true"':''}>${ic('check')} ${S.editing?'שמירת השינויים':'שליחת ההזמנה'}</button></div></div>`;
+},
+done(){
+  const o=S.order, r=S.round, st=o.status, canEdit=st==='wait'&&r&&!r.closed;
+  const link=location.origin+location.pathname+'#o='+o.uid;
+  return `<div class="app"><div class="scroll">
+    <div class="ok"><div class="mark lg">${ic(st==='cancelled'?'x':'check')}</div>
+      <div class="ttl">${st==='cancelled'?'ההזמנה בוטלה':st==='done'?'ההזמנה נאספה':'ההזמנה התקבלה'}</div>
+      <div class="date" style="margin-top:4px">הזמנה ${o.num} · ${esc(o.name)}</div>
+      <div style="margin-top:8px"><span class="badge ${st==='wait'?'b-wait':st==='done'?'b-done':'b-off'}">${st==='wait'?'ממתינה לאיסוף':st==='done'?'נאספה, תודה!':'בוטלה'}</span></div></div>
+    ${st==='wait'&&r?`<div class="banner">${ic('bag')}<div><b>איסוף ב${roundPick(r)}</b><span>משלמים באיסוף.</span></div></div>`:''}
+    <div class="group">${o.lines.map(l=>`<div class="row"><span class="main"><span class="nm">${esc(l.name)}</span><span class="sub">${st==='done'&&l.unit===KG?kg(o.actual[l.pid]||l.qty)+' ק״ג':qtyText(l.unit,l.qty)}</span></span><span class="amt">${st!=='done'&&l.unit===KG?'~':''}${money(l.price*(st==='done'&&l.unit===KG?(o.actual[l.pid]||l.qty):l.qty))}</span></div>`).join('')}</div>
+    <div class="total"><div class="k">${st==='done'?'שולם':'בערך'}</div><div class="v">${money(st==='done'?o.final:o.est)}</div></div>
+    ${canEdit?`<div class="plink">שומרים את הקישור הזה. ממנו אפשר לשנות או לבטל עד ${closeText(r.closeTs)}.<code>${esc(link)}</code></div>`:''}
+  </div>
+  ${canEdit?`<div class="foot"><button class="btn out" data-a="edit">${ic('edit')} שינוי ההזמנה</button><button class="btn redtext" data-a="askCancel">ביטול ההזמנה</button></div>`
+    :st==='wait'?`<div class="note" style="margin-bottom:14px">${ic('lock')} ההזמנות נסגרו, אי אפשר לשנות יותר.</div>`:''}
+  </div>`;
+}
+};
+const SH={cancel(){return `<div class="grab"></div><div class="ttl">לבטל את ההזמנה?</div><p class="sh-p">ההזמנה תימחק מרשימת האיסוף של החנות.</p><div class="err" id="xErr"></div>
+  <button class="btn dan" data-a="doCancel" ${S.busy?'aria-busy="true"':''}>ביטול ההזמנה</button><button class="btn ghost" data-a="close">חזרה</button>`}};
+
+const view=document.getElementById('view');
+function syncInputs(){const g=id=>document.getElementById(id);if(g('cName'))S.name=g('cName').value;if(g('cPhone'))S.phone=g('cPhone').value;if(g('cNote'))S.note=g('cNote').value}
+function render(){
+  syncInputs();
+  view.innerHTML=V[S.screen]()+(S.sheet?`<div class="scrim" data-a="scrim"><div class="sheet" role="dialog" aria-modal="true">${SH[S.sheet]()}</div></div>`:'');
+}
+let tt;
+function toast(m,bad){const t=document.getElementById('toast');t.innerHTML=ic(bad?'x':'check')+'<span>'+esc(m)+'</span>';t.classList.toggle('bad',!!bad);t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),bad?4000:2400)}
+const setErr=(id,m)=>{const e=document.getElementById(id);if(e)e.textContent=m};
+const step=p=>p.unit===KG?0.5:1;
+const payload=()=>({name:S.name.trim(),phone:S.phone.trim(),note:S.note.trim(),lines:cartLines().map(l=>({pid:l.p.id,qty:l.q}))});
+
+const A={
+  retry(){boot()},
+  go(v){syncInputs();S.screen=v;S.sheet=null;render()},
+  start(){
+    syncInputs();
+    if(!S.name.trim()) return setErr('cErr','חסר שם');
+    if(S.phone.replace(/\D/g,'').length<9) return setErr('cErr','חסר מספר טלפון');
+    ls.set('veg.customer',{name:S.name.trim(),phone:S.phone.trim()});
+    A.go(S.editing?'details':'shop');
+  },
+  inc(id){const p=S.products.find(x=>x.id===id);S.cart[id]=r3((S.cart[id]||0)+step(p));render()},
+  dec(id){const p=S.products.find(x=>x.id===id);const n=r3((S.cart[id]||0)-step(p));if(n>0)S.cart[id]=n;else delete S.cart[id];render()},
+  next(){cartLines().length?A.go('details'):toast('בוחרים לפחות ירק אחד')},
+  send(){
+    if(S.busy) return; syncInputs(); S.busy=true; render();
+    const req=S.editing?call('pubUpdate',S.order.uid,payload()):call('pubSubmit',S.round.id,payload());
+    req.then(d=>{
+      S.busy=false; S.order=d.order; S.round=d.round||S.round;
+      ls.set('veg.my.'+S.round.id,S.order.uid);
+      history.replaceState(null,'','#o='+S.order.uid);
+      const wasEdit=S.editing; S.editing=false; S.screen='done'; render();
+      toast(wasEdit?'השינויים נשמרו':'ההזמנה נשלחה');
+    }).catch(e=>{S.busy=false;render();setErr('sErr',errText(e))});
+  },
+  edit(){
+    // Reload the price list, then put the order back in the basket.
+    S.screen='loading';render();
+    call('pubRound',S.order.round).then(d=>{
+      if(d.round.closed){S.round=d.round;S.screen='done';render();return toast('ההזמנות נסגרו, אי אפשר לשנות',true)}
+      S.round=d.round;S.products=d.products;S.cart={};
+      S.order.lines.forEach(l=>{if(S.products.some(p=>p.id===l.pid))S.cart[l.pid]=l.qty});
+      Object.assign(S,{name:S.order.name,phone:S.order.phone,note:S.order.note,editing:true,screen:'shop'});render();
+    }).catch(e=>{S.screen='done';render();toast(errText(e),true)});
+  },
+  askCancel(){S.sheet='cancel';render()},
+  doCancel(){
+    if(S.busy) return; S.busy=true; render();
+    call('pubCancel',S.order.uid).then(d=>{S.busy=false;S.sheet=null;S.order=d.order;S.round=d.round;render();toast('ההזמנה בוטלה')})
+      .catch(e=>{S.busy=false;render();setErr('xErr',errText(e))});
+  },
+  close(){S.sheet=null;render()}
+};
+view.addEventListener('click',e=>{const el=e.target.closest('[data-a]');if(!el)return;const a=el.dataset.a;
+  if(a==='scrim'){if(e.target===el)A.close();return}
+  A[a]&&A[a](el.dataset.v,el)});
+window.addEventListener('hashchange',boot);
+boot();
+</script>
+</body>
+</html>

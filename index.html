@@ -151,6 +151,42 @@ svg{width:20px;height:20px;flex:none;fill:none;stroke:currentColor;stroke-width:
   display:flex;gap:8px;align-items:center;z-index:30;opacity:0;transform:translateY(-8px);transition:opacity .2s,transform .2s;pointer-events:none}
 .toast.show{opacity:1;transform:none}
 .toast.bad{background:var(--beet);color:var(--card)}
+
+/* ---- איסוף ---- */
+.badge.b-wait{color:var(--warn);background:transparent;border:1.5px solid var(--warn)}
+.badge.b-done{color:var(--leaf);background:var(--leaf-soft)}
+.badge.b-off{color:var(--beet);background:var(--beet-soft)}
+.total .n{font-size:13px;color:var(--ink-2)}
+.wneed{font-weight:700;color:var(--warn)}
+.round{margin:0 14px 10px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 14px}
+.round .h{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.round b{font-size:16px}
+.round .d{font-size:13px;color:var(--ink-2);margin-top:2px}
+.round .acts{display:flex;gap:8px;margin-top:10px}
+.round .acts .btn{flex:1;height:42px;font-size:15px;border-radius:12px}
+.form{padding:0 16px}
+.form .in{background:var(--card)}
+.two{display:flex;gap:10px;align-items:center}
+.two span{color:var(--ink-2);white-space:nowrap}
+select.in{appearance:auto}
+.chip small{display:block;font-size:11px;font-weight:600;color:var(--ink-2)}
+.chip.on small{color:var(--leaf)}
+.ok{text-align:center;padding:6px 20px 8px}
+.ok .mark{width:64px;height:64px;margin:0 auto 10px}
+.ok .mark svg{width:32px;height:32px;stroke-width:2.6}
+.msg{margin:4px 14px 12px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 14px;font-size:15px;line-height:1.5;white-space:pre-line;word-break:break-word}
+.msg code{direction:ltr;display:inline-block;color:var(--leaf);font-size:13px;word-break:break-all}
+.pw{flex:none;display:flex;align-items:center;gap:6px;border:1.5px solid var(--warn);color:var(--warn);background:var(--card);border-radius:14px;height:42px;padding:0 12px;font-weight:700;font-variant-numeric:tabular-nums}
+.pw.has{border-color:var(--leaf);background:var(--leaf);color:var(--leaf-ink)}
+.pw svg{width:18px;height:18px}
+.cbtn{flex:none;display:flex;align-items:center;gap:4px;height:42px;border:0;border-radius:12px;background:var(--leaf);color:var(--leaf-ink);padding:0 12px;font-weight:700}
+.cbtn svg{width:18px;height:18px;stroke-width:2.6}
+.cbtn[aria-busy="true"]{opacity:.6;pointer-events:none}
+.contact{margin:0 14px 10px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.contact b{display:block;font-size:18px}
+.contact span{font-size:14px;color:var(--ink-2);direction:ltr;display:inline-block}
+.btn.wa{background:#1F9D55;color:#fff}
+.plist .row{min-height:52px}
 </style>
 </head>
 <body>
@@ -179,7 +215,13 @@ const ICONS={
   scale:'<path d="M5 20h14l-2-11H7z"/><path d="M12 9V5M9 5h6"/>',
   basket:'<path d="M3 10h18l-2 10H5z"/><path d="M8 10l4-6 4 6"/>',
   sync:'<path d="M20 11a8 8 0 0 0-14.9-3M4 13a8 8 0 0 0 14.9 3"/><path d="M5 3v5h5M19 21v-5h-5"/>',
-  wifiOff:'<path d="M3 3l18 18M8.5 16.5a5 5 0 0 1 7 0M5 12.9a10 10 0 0 1 5.2-2.8M19 12.9a10 10 0 0 0-2.2-1.6M2 9a15 15 0 0 1 4.3-2.8M22 9a15 15 0 0 0-11-3.9"/><path d="M12 20h.01"/>'
+  wifiOff:'<path d="M3 3l18 18M8.5 16.5a5 5 0 0 1 7 0M5 12.9a10 10 0 0 1 5.2-2.8M19 12.9a10 10 0 0 0-2.2-1.6M2 9a15 15 0 0 1 4.3-2.8M22 9a15 15 0 0 0-11-3.9"/><path d="M12 20h.01"/>',
+  bag:'<path d="M5 8h14l-1 12H6z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/>',
+  link:'<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
+  edit:'<path d="M4 20h4L19 9l-4-4L4 16z"/>', share:'<path d="M12 4v12M7 9l5-5 5 5M5 20h14"/>',
+  copy:'<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/>',
+  list:'<path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/>', eye2:'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+  phone:'<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/>'
 };
 const ic=n=>`<svg viewBox="0 0 24 24" aria-hidden="true">${ICONS[n]}</svg>`;
 
@@ -236,7 +278,8 @@ const errText=e=>isNetErr(e)?'אין חיבור לאינטרנט. נסו שוב'
 
 let PIN=ls.get('veg.pin',null);
 let S={screen:PIN?'loading':'login',lastScreen:'',products:[],orders:[],cart:{},sheet:null,fresh:false,q:'',day:0,range:'today',
-  scroll:{},pinBuf:'',loginErr:'',checking:false,updated:null,offline:false,links:null,busy:false};
+  scroll:{},pinBuf:'',loginErr:'',checking:false,updated:null,offline:false,links:null,busy:false,
+  pk:{round:null,orders:[],loaded:false,err:''},ptab:'wait',puid:null,form:null};
 
 const prod=id=>S.products.find(p=>p.id===id);
 const cats=()=>[...new Set(S.products.map(p=>p.cat))];
@@ -260,6 +303,7 @@ function refresh(){
   if(refreshing||!PIN) return; refreshing=true;
   call('getData',PIN).then(d=>{
     apply(d); if(S.screen==='loading') S.screen='home';
+    loadPickup();
     softRender(); flush();
   }).catch(e=>{
     if(isPinErr(e)) return logout('הקוד השתנה. מקלידים את הקוד החדש');
@@ -303,9 +347,46 @@ const dayOrders=off=>{const k=offsetDay(off);return S.orders.filter(o=>orderDay(
 const isToday=o=>orderDay(o)===offsetDay(0);
 
 /* ---------- views ---------- */
-const tabs=on=>`<nav class="tabs">
-  <button class="tab ${on==='home'?'on':''}" data-a="go" data-v="home">${ic('home')}<span>בית</span></button>
-  <button class="tab ${on==='products'?'on':''}" data-a="go" data-v="products">${ic('leaf')}<span>מוצרים</span></button></nav>`;
+const tabs=on=>{const w=pkWaiting().length;return `<nav class="tabs">
+  <button class="tab ${on==='home'?'on':''}" data-a="go" data-v="home">${ic('home')}<span>קופה</span></button>
+  <button class="tab ${on==='pickups'?'on':''}" data-a="go" data-v="pickups">${ic('bag')}<span>איסוף${w?` (${w})`:''}</span></button>
+  <button class="tab ${on==='products'?'on':''}" data-a="go" data-v="products">${ic('leaf')}<span>מוצרים</span></button></nav>`};
+
+/* ---------- איסוף: helpers ---------- */
+const ORDER_URL='https://tomer-ba-text.github.io/veg-counter/order.html';
+const dayName=d=>new Intl.DateTimeFormat('he-IL',{weekday:'long'}).format(d);
+const dm=d=>d.getDate()+'.'+(d.getMonth()+1);
+const dayAdd=n=>{const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()+n);return d};
+const parseDay=s=>{const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)};
+const PICK_DAYS=()=>[1,2,3,4,5,6,7].map(dayAdd).filter(d=>d.getDay()!==6);
+const HOURS=['7:00','8:00','9:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00','19:00','20:00','21:00','22:00','23:00','24:00'];
+const atHour=(d,h)=>{const x=new Date(d);const [hh,mm]=h.split(':');x.setHours(+hh,+mm,0,0);return x};
+const closeDaysFor=pick=>{const out=[];for(let i=0;i<=8;i++){const d=dayAdd(i);if(d>pick)break;out.push(d)}return out};
+const roundPick=r=>{const d=parseDay(r.pick);return `${dayName(d)} ${dm(d)}, ${r.from}-${r.to}`};
+// Midnight reads as "24:00" of the day before, the way people say it.
+const closeText=ts=>{const d=new Date(ts);if(!d.getHours()&&!d.getMinutes()){const p=new Date(ts-1);return `${dayName(p)} ${dm(p)} ב-24:00`}return `${dayName(d)} ${dm(d)} ב-${d.getHours()}:${pad(d.getMinutes())}`};
+const closeParts=ts=>{const d=new Date(ts);if(!d.getHours()&&!d.getMinutes()){const p=new Date(ts-1);p.setHours(0,0,0,0);return {day:p,at:'24:00'}}const day=new Date(d);day.setHours(0,0,0,0);return {day,at:d.getHours()+':'+pad(d.getMinutes())}};
+const pkWaiting=()=>S.pk.orders.filter(o=>o.status==='wait');
+const pkFind=uid=>S.pk.orders.find(o=>o.uid===uid);
+const pkKg=o=>o.lines.filter(l=>l.unit===KG);
+const pkMissing=o=>pkKg(o).filter(l=>!(o.actual&&o.actual[l.pid]>0));
+const pkFinal=o=>r2(o.lines.reduce((s,l)=>s+l.price*(l.unit===KG?(o.actual[l.pid]||0):l.qty),0));
+const pkSummary=o=>o.lines.map(l=>l.unit===KG?`${l.name} ~${kg(l.qty)} ק״ג`:l.qty>1?`${l.name} ×${l.qty}`:l.name).join(', ');
+const roundLink=r=>ORDER_URL+'#'+r.id;
+let pkLoading=false;
+function loadPickup(){
+  if(pkLoading||!PIN) return; pkLoading=true;
+  call('getPickup',PIN).then(applyPickup).catch(e=>{
+    if(isPinErr(e)) return logout('הקוד השתנה. מקלידים את הקוד החדש');
+    S.pk.err=errText(e); S.pk.loaded=true; softRender();
+  }).finally(()=>{pkLoading=false});
+}
+function applyPickup(d){
+  // Keep weights typed on this phone for orders that are still waiting.
+  const old={}; S.pk.orders.forEach(o=>{old[o.uid]=o.actual});
+  S.pk={round:d.round,orders:d.orders.map(o=>Object.assign(o,{actual:o.status==='wait'?Object.assign({},o.actual,old[o.uid]):o.actual})),loaded:true,err:''};
+  softRender();
+}
 
 function statusLine(){
   const n=loadQueue().length;
@@ -394,6 +475,79 @@ products(){
   }).join('')||`<div class="empty">${ic('leaf')}<div>אין עדיין ירקות. מוסיפים עם ״ירק חדש״</div></div>`}
   <button class="logout" data-a="logoutAsk">יציאה מהאפליקציה</button></div>
   ${tabs('products')}</div>`;
+},
+
+/* ---------- איסוף ---------- */
+pickups(){
+  const r=S.pk.round, head=`<header class="top"><div style="flex:1"><div class="ttl">הזמנות לאיסוף</div></div></header>`;
+  if(!S.pk.loaded) return `<div class="app">${head}<div class="scroll"><div class="empty">${ic('sync')}<div>טוען…</div></div></div>${tabs('pickups')}</div>`;
+  if(S.pk.err&&!r) return `<div class="app">${head}<div class="scroll"><div class="empty">${ic('wifiOff')}<div>${esc(S.pk.err)}</div></div><div style="padding:0 14px"><button class="btn out" data-a="pkReload">ניסיון נוסף</button></div></div>${tabs('pickups')}</div>`;
+  if(!r) return `<div class="app">${head}<div class="scroll"><div class="empty">${ic('link')}<div style="color:var(--ink);font-size:18px;font-weight:700;margin:6px 0 2px">אין סבב הזמנות פתוח</div>בוחרים יום איסוף, מקבלים קישור ושולחים אותו ללקוחות בוואטסאפ. הלקוחות רואים רק את דף ההזמנה.</div></div>
+    <div class="foot"><button class="btn pri" data-a="newRound">${ic('plus')} פתיחת סבב הזמנות</button></div>${tabs('pickups')}</div>`;
+  const tab=S.ptab, all=S.pk.orders, list=all.filter(o=>o.status===tab).sort((a,b)=>a.num-b.num), cnt=k=>all.filter(o=>o.status===k).length;
+  return `<div class="app">${head}
+  <div class="scroll">
+    <div class="round"><div class="h"><div><b>איסוף ${roundPick(r)}</b><div class="d">${r.closed?'ההזמנות נסגרו':'מזמינים עד '+closeText(r.closeTs)}</div></div><span class="badge ${r.closed?'b-off':'b-done'}">${r.closed?'סגור':'פתוח'}</span></div>
+      <div class="acts">${r.closed?`<button class="btn out" data-a="editRound">${ic('edit')} מועדים</button><button class="btn out" data-a="newRound">${ic('plus')} סבב חדש</button>`
+        :`<button class="btn out" data-a="go" data-v="share">${ic('share')} שליחה</button><button class="btn out" data-a="editRound">${ic('edit')} מועדים</button><button class="btn redtext" style="border:1.5px solid var(--line);height:42px" data-a="askCloseRound">סגירה</button>`}</div></div>
+    <div class="chips chipbar">${[['wait','ממתינות'],['done','נאספו'],['cancelled','בוטלו']].map(([k,n])=>`<button class="chip ${tab===k?'on':''}" data-a="ptab" data-v="${k}">${n} (${cnt(k)})</button>`).join('')}</div>
+    ${tab==='wait'&&list.length?`<div style="padding:0 14px 10px"><button class="btn out" data-a="pickList">${ic('list')} כמה להכין מכל ירק</button></div>`:''}
+    ${list.length?`<div class="group">${list.map(o=>`<div class="row"><button class="rowbtn" data-a="openPre" data-v="${o.uid}"><span class="main">
+      <span class="nm">${esc(o.name)} <span class="sub" style="display:inline;font-weight:400">· הזמנה ${o.num}</span></span>
+      <span class="sub">${esc(pkSummary(o))}</span><span class="sub amt" style="color:var(--ink)">${o.status==='done'?money(o.final):'~'+money(o.est)}</span></span></button>
+      ${o.status==='wait'?`<button class="cbtn" data-a="quickCollect" data-v="${o.uid}">${ic('check')} נאסף</button>`:''}</div>`).join('')}</div>`
+      :`<div class="empty">${ic('bag')}<div>${tab==='wait'?'עוד אין הזמנות. שולחים את הקישור ללקוחות':tab==='done'?'עוד לא נאספו הזמנות':'אין הזמנות שבוטלו'}</div></div>`}
+  </div>${tabs('pickups')}</div>`;
+},
+roundForm(){
+  const f=S.form, days=PICK_DAYS(), pick=days[f.day], cdays=closeDaysFor(pick);
+  if(f.closeDay>=cdays.length) f.closeDay=cdays.length-1;
+  const sel=(id,v)=>`<select class="in" id="${id}">${HOURS.map(h=>`<option ${h===v?'selected':''}>${h}</option>`).join('')}</select>`;
+  const chip=(d,i,on,a,today)=>`<button class="chip ${on?'on':''}" data-a="${a}" data-v="${i}">${today?'היום':dayName(d).replace('יום ','')}<small>${dm(d)}</small></button>`;
+  return `<div class="app">
+  <header class="top"><button class="ibtn" data-a="go" data-v="pickups" aria-label="חזרה">${ic('back')}</button><div class="ttl" style="flex:1">${f.editing?'שינוי מועדים':'סבב הזמנות חדש'}</div></header>
+  <div class="scroll"><div class="form">
+    <span class="fl">יום איסוף</span><div class="chips">${days.map((d,i)=>chip(d,i,f.day===i,'fDay')).join('')}</div>
+    <span class="fl">שעות איסוף</span><div class="two">${sel('fFrom',f.from)}<span>עד</span>${sel('fTo',f.to)}</div>
+    <span class="fl">ההזמנות נסגרות</span><div class="chips">${cdays.map((d,i)=>chip(d,i,f.closeDay===i,'fCloseDay',i===0)).join('')}</div>
+    <div class="two" style="margin-top:10px"><span>בשעה</span>${sel('fCloseAt',f.closeAt)}</div>
+    <div class="err" id="fErr" style="margin-top:8px"></div>
+    <p class="sh-p">${f.editing?'הקישור נשאר אותו קישור. לקוחות שכבר הזמינו לא צריכים לעשות כלום.':'הלקוחות רואים את המחירון מלשונית "מוצרים". ירק שמסומן "אזל" לא יופיע להם.'}</p>
+  </div></div>
+  <div class="foot"><button class="btn pri" data-a="saveRound" ${S.busy?'aria-busy="true"':''}>${f.editing?ic('check')+' שמירת המועדים':ic('link')+' יצירת קישור ללקוחות'}</button></div></div>`;
+},
+share(){
+  const r=S.pk.round; if(!r) return V.pickups();
+  const text=`שלום! אפשר להזמין סל ירקות לאיסוף ב${roundPick(r)}.\nמזמינים עד ${closeText(r.closeTs)} כאן:`, link=roundLink(r);
+  return `<div class="app">
+  <header class="top"><button class="ibtn" data-a="go" data-v="pickups" aria-label="חזרה">${ic('back')}</button><div class="ttl" style="flex:1">שליחת הקישור</div></header>
+  <div class="scroll">
+    <div class="ok"><div class="mark">${ic('link')}</div><div class="ttl">הקישור מוכן</div><div class="date">איסוף ${roundPick(r)}</div></div>
+    <div class="cat">ההודעה שתישלח</div>
+    <div class="msg">${esc(text)}\n<code>${esc(link)}</code></div>
+    <p class="sh-p" style="padding:0 18px;font-size:13px">הקישור עובד רק לסבב הזה. אחרי הסגירה הלקוחות רואים "ההזמנות נסגרו".</p>
+  </div>
+  <div class="foot"><a class="btn wa" href="https://wa.me/?text=${encodeURIComponent(text+'\n'+link)}" target="_blank" rel="noopener">שליחה בוואטסאפ</a>
+    <button class="btn out" data-a="copyLink">${ic('copy')} העתקת הקישור</button>
+    <a class="btn ghost" href="${esc(link)}" target="_blank" rel="noopener">${ic('eye2')} לראות מה הלקוח רואה</a></div></div>`;
+},
+preDetail(){
+  const o=pkFind(S.puid); if(!o) return V.pickups();
+  const wait=o.status==='wait', missing=pkMissing(o);
+  return `<div class="app">
+  <header class="top"><button class="ibtn" data-a="go" data-v="pickups" aria-label="חזרה">${ic('back')}</button><div style="flex:1"><div class="ttl">הזמנה ${o.num}</div><div class="date">${wait?'ממתינה לאיסוף':o.status==='done'?'נאספה':'בוטלה על ידי הלקוח'}</div></div></header>
+  <div class="scroll">
+    <div class="contact"><div><b>${esc(o.name)}</b><span>${esc(o.phone)}</span></div><span class="ibtn" title="טלפון">${ic('phone')}</span></div>
+    ${o.note?`<div class="note">הערה: ${esc(o.note)}</div>`:''}
+    <div class="group">${o.lines.map(l=>{const isKg=l.unit===KG, a=o.actual&&o.actual[l.pid];
+      return `<div class="row"><span class="main"><span class="nm">${esc(l.name)}</span><span class="sub">${isKg?'הוזמן בערך '+kg(l.qty)+' ק״ג · '+money(l.price)+' לק״ג':qtyText(l.unit,l.qty)+' × '+money(l.price)}</span></span>
+      ${isKg?(wait?`<button class="pw ${a?'has':''}" data-a="preWeigh" data-v="${esc(l.pid)}">${a?kg(a)+' ק״ג':ic('scale')+' שקילה'}</button>`:`<span class="amt">${kg(a||0)} ק״ג</span>`)
+        :`<span class="amt">${money(l.price*l.qty)}</span>`}</div>`}).join('')}</div>
+    <div class="total"><div class="k">${!wait?'שולם':missing.length?'בערך (חסרה שקילה)':'לתשלום'}</div><div class="v" style="font-size:42px">${money(!wait?(o.final||0):missing.length?o.est:pkFinal(o))}</div>
+      ${missing.length&&wait?`<div class="n wneed">לשקול: ${missing.map(l=>esc(l.name)).join(', ')}</div>`:''}</div>
+  </div>
+  ${wait?`<div class="foot"><div class="err" id="pkErr"></div><button class="btn pri" data-a="collect" ${S.busy?'aria-busy="true"':''}>${ic('check')} נאסף · נרשם כמכירה</button></div>`:''}
+  </div>`;
 }
 };
 
@@ -492,9 +646,41 @@ product(){
 }
 };
 
+Object.assign(SH,{
+preWeigh(){
+  const o=pkFind(S.puid), l=o.lines.find(x=>x.pid===S.sheet.pid), b=S.sheet.buf, v=parseFloat(b)||0;
+  const flow=S.sheet.flow, left=pkMissing(o).filter(x=>x.pid!==l.pid).length;
+  return `<div class="grab"></div>${flow?`<div class="date" style="margin-bottom:6px">${esc(o.name)} · כדי לסמן "נאסף" שוקלים קודם</div>`:''}
+  <div class="sh-h"><div><div class="ttl">${esc(l.name)}</div><div class="date">הוזמן בערך ${kg(l.qty)} ק״ג · ${money(l.price)} לק״ג</div></div><button class="ibtn" data-a="close" aria-label="סגירה">${ic('x')}</button></div>
+  <div class="wv"><span id="wVal">${b||'0'}</span> <span class="wu">ק״ג</span></div>
+  <div class="wp" id="wPrice">${v?'= '+money(l.price*v):'מקלידים את המשקל מהמאזניים'}</div><div class="err" id="wErr"></div>
+  <div class="keys">${['1','2','3','4','5','6','7','8','9','.','0','del'].map(k=>`<button class="key" data-a="key" data-v="${k}" aria-label="${k==='del'?'מחיקת ספרה':k}">${k==='del'?ic('backspace'):k}</button>`).join('')}</div>
+  <button class="btn pri" data-a="preWeighOk" ${S.busy?'aria-busy="true"':''}>${!flow?'שמירת המשקל':left?'שמירה ולשקילה הבאה':ic('check')+' שמירה · נאסף'}</button>`;
+},
+pickList(){
+  const tot={}, meta={};
+  pkWaiting().forEach(o=>o.lines.forEach(l=>{tot[l.pid]=r3((tot[l.pid]||0)+l.qty);meta[l.pid]=l}));
+  const ids=Object.keys(tot).sort((a,b)=>meta[a].name.localeCompare(meta[b].name,'he'));
+  return `<div class="grab"></div><div class="sh-h"><div><div class="ttl">כמה להכין</div><div class="date">${pkWaiting().length} הזמנות ממתינות · ${roundPick(S.pk.round)}</div></div><button class="ibtn" data-a="close" aria-label="סגירה">${ic('x')}</button></div>
+  <div class="group plist" style="margin:10px 0">${ids.map(id=>`<div class="row"><span class="main"><span class="nm">${esc(meta[id].name)}</span></span><span class="amt">${meta[id].unit===KG?'בערך ':''}${qtyText(meta[id].unit,tot[id])}</span></div>`).join('')}</div>
+  <p class="sh-p" style="font-size:13px">מתעדכן עם כל הזמנה. ככה יודעים מה להזמין מהחווה.</p>`;
+},
+closeRound(){
+  return `<div class="grab"></div><div class="ttl">לסגור את ההזמנות עכשיו?</div><p class="sh-p">לקוחות שיפתחו את הקישור יראו "ההזמנות נסגרו". הזמנות שכבר נכנסו נשארות לאיסוף.</p>
+  <div class="err" id="crErr"></div>
+  <button class="btn dan" data-a="doCloseRound" ${S.busy?'aria-busy="true"':''}>סגירת ההזמנות</button><button class="btn ghost" data-a="close">ביטול</button>`;
+}
+});
+
 function wPrice(){
-  const p=prod(S.sheet.pid), v=parseFloat(S.sheet.buf)||0;
-  return v?'= '+money(p.price*v):'מקלידים את המשקל מהמאזניים';
+  const v=parseFloat(S.sheet.buf)||0;
+  // A pickup line keeps the price the customer ordered at.
+  const price=S.sheet.type==='preWeigh'?pkFind(S.puid).lines.find(x=>x.pid===S.sheet.pid).price:prod(S.sheet.pid).price;
+  return v?'= '+money(price*v):'מקלידים את המשקל מהמאזניים';
+}
+function syncRoundForm(){
+  const a=document.getElementById('fFrom'); if(!a||!S.form) return;
+  S.form.from=a.value; S.form.to=document.getElementById('fTo').value; S.form.closeAt=document.getElementById('fCloseAt').value;
 }
 function syncDraft(){
   const n=document.getElementById('pName'); if(!n) return;
@@ -505,6 +691,7 @@ function syncDraft(){
 const view=document.getElementById('view');
 function render(){
   if(S.sheet&&S.sheet.type==='product') syncDraft();
+  syncRoundForm();
   const sc=view.querySelector('.scroll'); if(sc&&S.lastScreen) S.scroll[S.lastScreen]=sc.scrollTop;
   view.innerHTML=V[S.screen]()+(S.sheet?`<div class="scrim ${S.fresh?'enter':''}" data-a="scrim"><div class="sheet" role="dialog" aria-modal="true">${SH[S.sheet.type]()}</div></div>`:'');
   S.fresh=false;
@@ -512,7 +699,7 @@ function render(){
   S.lastScreen=S.screen;
 }
 // Background updates never redraw mid-sale or under an open sheet, so typing and tapping are never interrupted.
-function softRender(){ if(!S.sheet&&['home','orders','products','loading'].includes(S.screen)) render(); }
+function softRender(){ if(!S.sheet&&['home','orders','products','loading','pickups'].includes(S.screen)) render(); }
 function openSheet(o){S.sheet=o;S.fresh=true;render()}
 function closeSheet(){S.sheet=null;S.busy=false;render()}
 let toastT;
@@ -542,7 +729,7 @@ function pinKey(k){
   if(S.pinBuf.length===4){
     const pin=S.pinBuf; S.checking=true; setErr('lErr','בודק…');
     call('getData',pin).then(d=>{
-      PIN=pin; ls.set('veg.pin',pin); S.pinBuf=''; S.loginErr=''; apply(d); S.screen='home'; render(); flush();
+      PIN=pin; ls.set('veg.pin',pin); S.pinBuf=''; S.loginErr=''; apply(d); S.screen='home'; render(); flush(); loadPickup();
     }).catch(e=>{
       S.pinBuf=''; S.loginErr=isPinErr(e)?'הקוד לא נכון. נסו שוב':errText(e); render();
     }).finally(()=>{S.checking=false});
@@ -551,7 +738,7 @@ function pinKey(k){
 
 /* ---------- actions ---------- */
 const A={
-  go(v){S.screen=v;S.sheet=null;if(v==='orders'){S.day=0;S.scroll.orders=0}render()},
+  go(v){S.screen=v;S.sheet=null;if(v==='orders'){S.day=0;S.scroll.orders=0}if(v==='pickups')loadPickup();render()},
   newSale(){S.cart={};S.q='';S.scroll.sale=0;S.screen='sale';render()},
   leaveSale(){cartCount()?openSheet({type:'discard'}):A.go('home')},
   doDiscard(){S.cart={};S.q='';A.go('home')},
@@ -646,6 +833,84 @@ const A={
   close(){closeSheet()}
 };
 
+/* ---------- איסוף: actions ---------- */
+const pkFail=(e,errId)=>{
+  if(isPinErr(e)) return logout('הקוד השתנה. מקלידים את הקוד החדש');
+  S.busy=false; render(); if(errId) setErr(errId,errText(e)); else toast(errText(e),true);
+};
+Object.assign(A,{
+  pkReload(){S.pk.loaded=false;render();loadPickup()},
+  ptab(v){S.ptab=v;render()},
+  newRound(){
+    const days=PICK_DAYS(), day=Math.max(0,days.findIndex(d=>d.getDay()===5));
+    S.form={day,from:'9:00',to:'13:00',closeDay:Math.max(0,closeDaysFor(days[day]).length-2),closeAt:'20:00',editing:false};
+    A.go('roundForm');
+  },
+  editRound(){
+    const r=S.pk.round, days=PICK_DAYS(), pick=parseDay(r.pick), day=days.findIndex(d=>+d===+pick), c=closeParts(r.closeTs);
+    S.form={day:Math.max(0,day),from:r.from,to:r.to,closeDay:Math.max(0,closeDaysFor(days[Math.max(0,day)]).findIndex(d=>+d===+c.day)),closeAt:c.at,editing:true};
+    A.go('roundForm');
+  },
+  fDay(v){S.form.day=+v;render()},
+  fCloseDay(v){S.form.closeDay=+v;render()},
+  saveRound(){
+    if(S.busy) return;
+    syncRoundForm();
+    const f=S.form, pick=PICK_DAYS()[f.day], close=closeDaysFor(pick)[f.closeDay], closeAt=atHour(close,f.closeAt);
+    if(HOURS.indexOf(f.to)<=HOURS.indexOf(f.from)) return setErr('fErr','שעת הסיום צריכה להיות אחרי שעת ההתחלה');
+    if(closeAt>=atHour(pick,f.from)) return setErr('fErr','ההזמנות צריכות להיסגר לפני שהאיסוף מתחיל');
+    if(closeAt<=new Date()) return setErr('fErr','מועד הסגירה כבר עבר');
+    S.busy=true; render();
+    call('saveRound',PIN,{id:f.editing?S.pk.round.id:null,pick:dayKey(pick),from:f.from,to:f.to,closeTs:closeAt.getTime()}).then(d=>{
+      S.busy=false; applyPickup(d); S.ptab='wait';
+      if(f.editing){A.go('pickups');toast('המועדים עודכנו. הקישור לא השתנה')} else A.go('share');
+    }).catch(e=>pkFail(e,'fErr'));
+  },
+  copyLink(){
+    const link=roundLink(S.pk.round);
+    const done=()=>toast('הקישור הועתק');
+    try{navigator.clipboard.writeText(link).then(done,()=>prompt('העתקת הקישור:',link))}catch(e){prompt('העתקת הקישור:',link)}
+  },
+  askCloseRound(){openSheet({type:'closeRound'})},
+  doCloseRound(){
+    if(S.busy) return; S.busy=true; render();
+    call('closeRound',PIN,S.pk.round.id).then(d=>{S.busy=false;S.sheet=null;applyPickup(d);render();toast('ההזמנות נסגרו')}).catch(e=>pkFail(e,'crErr'));
+  },
+  pickList(){openSheet({type:'pickList'})},
+  openPre(uid){S.puid=uid;A.go('preDetail')},
+  preWeigh(pid){const o=pkFind(S.puid);openSheet({type:'preWeigh',pid,buf:o.actual&&o.actual[pid]?kg(o.actual[pid]):''})},
+  preWeighOk(){
+    if(S.busy) return;
+    const v=parseFloat(S.sheet.buf); if(!(v>0)) return setErr('wErr','מקלידים משקל לפני שממשיכים');
+    const o=pkFind(S.puid); o.actual=Object.assign({},o.actual,{[S.sheet.pid]:r3(v)});
+    if(!S.sheet.flow) return closeSheet();
+    // Collecting from the list: weigh each kg item in turn, then mark collected.
+    const next=pkMissing(o)[0];
+    if(next){S.sheet={type:'preWeigh',pid:next.pid,buf:'',flow:true};render();return}
+    pkCollect(o,'wErr');
+  },
+  quickCollect(uid){
+    S.puid=uid; const o=pkFind(uid), first=pkMissing(o)[0];
+    if(first) openSheet({type:'preWeigh',pid:first.pid,buf:'',flow:true}); else pkCollect(o);
+  },
+  collect(){
+    const o=pkFind(S.puid), missing=pkMissing(o);
+    if(missing.length) return setErr('pkErr','קודם שוקלים: '+missing.map(l=>l.name).join(', '));
+    pkCollect(o,'pkErr',true);
+  }
+});
+function pkCollect(o,errId,backToList){
+  if(S.busy) return; S.busy=true; render();
+  call('collectPreorder',PIN,o.uid,o.actual||{}).then(r=>{
+    S.busy=false; S.sheet=null;
+    Object.assign(o,r.order);
+    // The server wrote it as a regular sale; show it in קופה right away.
+    if(r.sale&&!S.orders.some(x=>x.uid===r.sale.uid)){S.orders.push(Object.assign({pending:false},r.sale));saveCache()}
+    if(backToList) S.screen='pickups';
+    render(); toast(`${o.name} · נאסף · ${money(o.final)} נרשם כמכירה`);
+  }).catch(e=>pkFail(e,S.sheet?'wErr':errId));
+}
+
 view.addEventListener('click',e=>{
   const el=e.target.closest('[data-a]'); if(!el) return;
   const a=el.dataset.a;
@@ -663,11 +928,11 @@ document.addEventListener('keydown',e=>{
   }
   if(!S.sheet) return;
   if(e.key==='Escape'){closeSheet();return}
-  if(S.sheet.type!=='weigh') return;
+  if(S.sheet.type!=='weigh'&&S.sheet.type!=='preWeigh') return;
   if(/^[0-9]$/.test(e.key)) pressKey(e.key);
   else if(e.key==='.'||e.key===',') pressKey('.');
   else if(e.key==='Backspace') pressKey('del');
-  else if(e.key==='Enter') A.weighOk();
+  else if(e.key==='Enter') S.sheet.type==='preWeigh'?A.preWeighOk():A.weighOk();
   else return;
   e.preventDefault();
 });
