@@ -189,6 +189,9 @@ select.in{appearance:auto}
 .contact span{font-size:14px;color:var(--ink-2);direction:ltr;display:inline-block}
 .btn.wa{background:#1F9D55;color:#fff}
 .plist .row{min-height:52px}
+.phrow{display:flex;gap:10px;align-items:center}
+.phimg{width:64px;height:64px;border-radius:12px;object-fit:cover;background:var(--paper);display:grid;place-items:center;color:var(--ink-3);flex:none}
+.phbtn{width:auto;height:42px;min-height:42px;padding:0 14px;font-size:15px;flex:none;cursor:pointer}
 </style>
 </head>
 <body>
@@ -658,6 +661,11 @@ product(){
   <label class="fl" for="pPrice">מחיר בשקלים</label><input class="in" id="pPrice" inputmode="decimal" value="${esc(d.price)}" placeholder="12" autocomplete="off">
   <span class="fl">נמכר לפי</span><div class="chips">${Object.keys(UNITS).map(u=>`<button class="chip ${d.unit===u?'on':''}" data-a="pUnit" data-v="${u}">${u}</button>`).join('')}</div>
   <span class="fl">קטגוריה</span><div class="chips">${cs.map(c=>`<button class="chip ${d.cat===c?'on':''}" data-a="pCat" data-v="${esc(c)}">${esc(c)}</button>`).join('')}</div>
+  <span class="fl">תמונה <span style="font-weight:400">· מופיעה רק בדף ההזמנה של הלקוחות</span></span>
+  <div class="phrow">${d.photo===null?`<div class="phimg">${ic('sync')}</div>`:d.photo?`<img class="phimg" src="${d.photo}" alt="">`:`<div class="phimg">${ic('leaf')}</div>`}
+    <label for="pPhoto" class="btn out phbtn">${d.photo?'החלפה':'הוספת תמונה'}</label>
+    ${d.photo?'<button class="btn redtext phbtn" data-a="pPhotoDel">הסרה</button>':''}
+    <input type="file" id="pPhoto" accept="image/*" hidden></div>
   <label class="tog"><input type="checkbox" id="pOut" ${d.out?'checked':''}> אזל להיום</label>
   <div class="err" id="pErr"></div>
   <button class="btn pri" data-a="pSave" ${S.busy?'aria-busy="true"':''}>שמירה</button>
@@ -832,7 +840,12 @@ const A={
     const msg=!old?`${name} נוסף`:old.price!==r2(price)?'נשמר. המחיר החדש חל על מכירות מעכשיו':'נשמר';
     S.busy=true; render();
     call('saveProduct',PIN,{id:S.sheet.pid,name,price:r2(price),unit:d.unit,cat:d.cat,out:d.out}).then(list=>{
-      S.products=list; saveCache(); closeSheet(); toast(msg);
+      S.products=list; saveCache();
+      const d=S.sheet&&S.sheet.draft;
+      if(!d||!d.photoChanged){closeSheet();toast(msg);return}
+      // A new product only gets its id from the server, so find it by name.
+      const pid=S.sheet.pid||((list.filter(p=>p.name===name).pop())||{}).id;
+      return call('savePhoto',PIN,pid,d.photo||'').then(()=>{closeSheet();toast(msg)});
     }).catch(e=>{
       if(isPinErr(e)) return logout('הקוד השתנה. מקלידים את הקוד החדש');
       S.busy=false; render(); setErr('pErr',errText(e));
@@ -851,6 +864,50 @@ const A={
   },
   close(){closeSheet()}
 };
+
+/* ---------- תמונות מוצרים (רק לדף הלקוחות) ---------- */
+// Crop to a square and shrink until it fits one sheet cell.
+function shrinkPhoto(file){
+  return new Promise((res,rej)=>{
+    const fr=new FileReader();
+    fr.onerror=()=>rej(new Error('לא הצלחתי לקרוא את התמונה'));
+    fr.onload=()=>{
+      const img=new Image();
+      img.onerror=()=>rej(new Error('הקובץ הזה לא תמונה'));
+      img.onload=()=>{
+        const side=Math.min(img.width,img.height), sx=(img.width-side)/2, sy=(img.height-side)/2;
+        const cv=document.createElement('canvas'), cx=cv.getContext('2d');
+        let size=360, q=0.8;
+        for(let i=0;i<10;i++){
+          cv.width=cv.height=size; cx.drawImage(img,sx,sy,side,side,0,0,size,size);
+          const out=cv.toDataURL('image/jpeg',q);
+          if(out.length<45000) return res(out);
+          if(q>0.55) q-=0.1; else size=Math.round(size*0.8);
+        }
+        rej(new Error('התמונה גדולה מדי'));
+      };
+      img.src=fr.result;
+    };
+    fr.readAsDataURL(file);
+  });
+}
+const editPBase=A.editP;
+A.editP=id=>{
+  editPBase(id);
+  const d=S.sheet.draft;
+  if(!id){d.photo='';render();return}
+  d.photo=null; render();
+  call('getPhoto',PIN,id).then(u=>{if(S.sheet&&S.sheet.type==='product'&&S.sheet.pid===id&&!d.photoChanged){d.photo=u;render()}})
+    .catch(()=>{if(!d.photoChanged){d.photo='';render()}});
+};
+A.pPhotoDel=()=>{const d=S.sheet.draft;d.photo='';d.photoChanged=true;render()};
+view.addEventListener('change',e=>{
+  if(e.target.id!=='pPhoto'||!e.target.files||!e.target.files[0]||!S.sheet||S.sheet.type!=='product') return;
+  const d=S.sheet.draft, prev=d.photo;
+  syncDraft(); d.photo=null; render();
+  shrinkPhoto(e.target.files[0]).then(u=>{d.photo=u;d.photoChanged=true;render()})
+    .catch(err=>{d.photo=prev||'';render();setErr('pErr',err.message)});
+});
 
 /* ---------- איסוף: actions ---------- */
 const pkFail=(e,errId)=>{

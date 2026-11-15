@@ -102,6 +102,19 @@ textarea.in{height:70px;padding:10px 12px;resize:none}
   display:flex;gap:8px;align-items:center;z-index:30;opacity:0;transform:translateY(-8px);transition:opacity .2s,transform .2s;pointer-events:none}
 .toast.show{opacity:1;transform:none}
 .toast.bad{background:var(--beet);color:var(--card)}
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:0 14px;align-items:start}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:8px;display:flex;flex-direction:column;gap:6px;text-align:center;min-width:0}
+.tile.sel{border-color:var(--leaf);box-shadow:0 0 0 1px var(--leaf)}
+.timg{border:0;padding:0;background:var(--paper);border-radius:12px;width:100%;aspect-ratio:1;overflow:hidden;display:block}
+.timg img{width:100%;height:100%;object-fit:cover;display:block}
+.tname{font-weight:600;font-size:15px;line-height:1.25;overflow-wrap:anywhere}
+.tprice{font-weight:700;font-variant-numeric:tabular-nums;margin-top:auto}
+.tprice small{font-weight:400;color:var(--ink-2);font-size:12px}
+.tadd{height:40px;border:0;border-radius:12px;background:var(--leaf-soft);color:var(--leaf);font-weight:700;display:flex;align-items:center;justify-content:center;gap:4px}
+.tadd svg{width:18px;height:18px;stroke-width:2.6}
+.tstep{display:flex;align-items:center;justify-content:space-between;direction:ltr;background:var(--leaf-soft);border-radius:12px;padding:3px;height:40px}
+.tstep .sb{width:34px;height:34px}
+.tstep .qv{color:var(--leaf)}
 </style>
 </head>
 <body>
@@ -192,11 +205,16 @@ start(){
 shop(){
   const L=cartLines(), n=L.length;
   return `<div class="app">${head(S.editing?'שינוי ההזמנה':'שלום '+esc(S.name.split(' ')[0]),S.editing?'done':'start')}
-  <div class="scroll">${cats().map(c=>`<div class="cat">${esc(c)}</div><div class="group">${S.products.filter(p=>p.cat===c).map(p=>{
-    const q=S.cart[p.id]||0, isKg=p.unit===KG, id=esc(p.id);
-    return `<div class="row ${q?'sel':''}"><div class="main"><span class="nm">${esc(p.name)}</span><span class="sub">${money(p.price)} ${unitOf(p.unit).per}${isKg?' · כמות משוערת':''}</span></div>
-      <div class="step"><button class="sb plus" data-a="inc" data-v="${id}" aria-label="עוד ${esc(p.name)}">${ic('plus')}</button>${q?`<span class="qv">${isKg?kg(q)+'<small>ק״ג</small>':q}</span>
-      <button class="sb" data-a="dec" data-v="${id}" aria-label="פחות ${esc(p.name)}">${ic('minus')}</button>`:''}</div></div>`}).join('')}</div>`).join('')}</div>
+  <div class="scroll">${cats().map(c=>`<div class="cat">${esc(c)}</div><div class="tiles">${S.products.filter(p=>p.cat===c).map(p=>{
+    const q=S.cart[p.id]||0, isKg=p.unit===KG, id=esc(p.id), photo=/^data:image\/jpeg;base64,/.test(p.photo||'')?p.photo:'';
+    return `<div class="tile ${q?'sel':''}">
+      ${photo?`<button class="timg" data-a="inc" data-v="${id}" aria-label="הוספת ${esc(p.name)}"><img src="${photo}" alt="" loading="lazy"></button>`:''}
+      <div class="tname">${esc(p.name)}</div>
+      <div class="tprice">${money(p.price)} <small>${unitOf(p.unit).per}${isKg?' · משוער':''}</small></div>
+      ${q?`<div class="tstep"><button class="sb" data-a="dec" data-v="${id}" aria-label="פחות ${esc(p.name)}">${ic('minus')}</button>
+        <span class="qv">${isKg?kg(q)+'<small>ק״ג</small>':q}</span>
+        <button class="sb plus" data-a="inc" data-v="${id}" aria-label="עוד ${esc(p.name)}">${ic('plus')}</button></div>`
+      :`<button class="tadd" data-a="inc" data-v="${id}">${ic('plus')} הוספה</button>`}</div>`}).join('')}</div>`).join('')}</div>
   <button class="cbar ${n?'':'empty'}" data-a="next">${n?`<span>${n===1?'ירק אחד':n+' ירקות'}</span><span>בערך ${money(estOf(L))} ←</span>`:'<span>בוחרים ירקות מהרשימה</span>'}</button></div>`;
 },
 details(){
