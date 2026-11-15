@@ -483,17 +483,17 @@ pickups(){
   if(!S.pk.loaded) return `<div class="app">${head}<div class="scroll"><div class="empty">${ic('sync')}<div>טוען…</div></div></div>${tabs('pickups')}</div>`;
   if(S.pk.err&&!r) return `<div class="app">${head}<div class="scroll"><div class="empty">${ic('wifiOff')}<div>${esc(S.pk.err)}</div></div><div style="padding:0 14px"><button class="btn out" data-a="pkReload">ניסיון נוסף</button></div></div>${tabs('pickups')}</div>`;
   if(!r) return `<div class="app">${head}<div class="scroll"><div class="empty">${ic('link')}<div style="color:var(--ink);font-size:18px;font-weight:700;margin:6px 0 2px">אין סבב הזמנות פתוח</div>בוחרים יום איסוף, מקבלים קישור ושולחים אותו ללקוחות בוואטסאפ. הלקוחות רואים רק את דף ההזמנה.</div></div>
-    <div class="foot"><button class="btn pri" data-a="newRound">${ic('plus')} פתיחת סבב הזמנות</button></div>${tabs('pickups')}</div>`;
+    <div class="foot"><button class="btn pri" data-a="newRound">${ic('plus')} התחלת סבב הזמנות</button></div>${tabs('pickups')}</div>`;
   const tab=S.ptab, all=S.pk.orders, list=all.filter(o=>o.status===tab).sort((a,b)=>a.num-b.num), cnt=k=>all.filter(o=>o.status===k).length;
   return `<div class="app">${head}
   <div class="scroll">
     <div class="round"><div class="h"><div><b>איסוף ${roundPick(r)}</b><div class="d">${r.closed?'ההזמנות נסגרו':'מזמינים עד '+closeText(r.closeTs)}</div></div><span class="badge ${r.closed?'b-off':'b-done'}">${r.closed?'סגור':'פתוח'}</span></div>
-      <div class="acts">${r.closed?`<button class="btn out" data-a="editRound">${ic('edit')} מועדים</button><button class="btn out" data-a="newRound">${ic('plus')} סבב חדש</button>`
+      <div class="acts">${r.closed?`<button class="btn pri" data-a="newRound">${ic('plus')} התחלת סבב הזמנות</button>`
         :`<button class="btn out" data-a="go" data-v="share">${ic('share')} שליחה</button><button class="btn out" data-a="editRound">${ic('edit')} מועדים</button><button class="btn redtext" style="border:1.5px solid var(--line);height:42px" data-a="askCloseRound">סגירה</button>`}</div></div>
     <div class="chips chipbar">${[['wait','ממתינות'],['done','נאספו'],['cancelled','בוטלו']].map(([k,n])=>`<button class="chip ${tab===k?'on':''}" data-a="ptab" data-v="${k}">${n} (${cnt(k)})</button>`).join('')}</div>
     ${tab==='wait'&&list.length?`<div style="padding:0 14px 10px"><button class="btn out" data-a="pickList">${ic('list')} כמה להכין מכל ירק</button></div>`:''}
     ${list.length?`<div class="group">${list.map(o=>`<div class="row"><button class="rowbtn" data-a="openPre" data-v="${o.uid}"><span class="main">
-      <span class="nm">${esc(o.name)} <span class="sub" style="display:inline;font-weight:400">· הזמנה ${o.num}</span></span>
+      <span class="nm">${esc(o.name)} <span class="sub" style="display:inline;font-weight:400">· הזמנה ${o.num}${o.round!==r.id?' · מסבב קודם':''}</span></span>
       <span class="sub">${esc(pkSummary(o))}</span><span class="sub amt" style="color:var(--ink)">${o.status==='done'?money(o.final):'~'+money(o.est)}</span></span></button>
       ${o.status==='wait'?`<button class="cbtn" data-a="quickCollect" data-v="${o.uid}">${ic('check')} נאסף</button>`:''}</div>`).join('')}</div>`
       :`<div class="empty">${ic('bag')}<div>${tab==='wait'?'עוד אין הזמנות. שולחים את הקישור ללקוחות':tab==='done'?'עוד לא נאספו הזמנות':'אין הזמנות שבוטלו'}</div></div>`}
