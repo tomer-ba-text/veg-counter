@@ -251,9 +251,14 @@ const SH={cancel(){return `<div class="grab"></div><div class="ttl">לבטל א�
 
 const view=document.getElementById('view');
 function syncInputs(){const g=id=>document.getElementById(id);if(g('cName'))S.name=g('cName').value;if(g('cPhone'))S.phone=g('cPhone').value;if(g('cNote'))S.note=g('cNote').value}
+// Redrawing replaces the list, so keep each screen's scroll position across redraws.
+let lastScreen=''; const scrollPos={};
 function render(){
   syncInputs();
+  const sc=view.querySelector('.scroll'); if(sc&&lastScreen) scrollPos[lastScreen]=sc.scrollTop;
   view.innerHTML=V[S.screen]()+(S.sheet?`<div class="scrim" data-a="scrim"><div class="sheet" role="dialog" aria-modal="true">${SH[S.sheet]()}</div></div>`:'');
+  const sc2=view.querySelector('.scroll'); if(sc2) sc2.scrollTop=scrollPos[S.screen]||0;
+  lastScreen=S.screen;
 }
 let tt;
 function toast(m,bad){const t=document.getElementById('toast');t.innerHTML=ic(bad?'x':'check')+'<span>'+esc(m)+'</span>';t.classList.toggle('bad',!!bad);t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),bad?4000:2400)}
