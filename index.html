@@ -77,6 +77,8 @@ svg{width:20px;height:20px;flex:none;fill:none;stroke:currentColor;stroke-width:
 .tabs{display:flex;border-top:1px solid var(--line);background:var(--card);flex:none}
 .tab{flex:1;padding:8px 0 10px;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:12px;font-weight:600;color:var(--ink-3);background:none;border:0}
 .tab.on{color:var(--leaf)}
+.tab svg.cashier{width:24px;height:24px;margin-top:-2px;opacity:.75}
+.tab.on svg.cashier{opacity:1}
 
 .search{margin:0 14px 6px;display:flex;align-items:center;gap:8px;background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:0 12px;height:46px;color:var(--ink-3)}
 .search:focus-within{border-color:var(--leaf)}
@@ -347,8 +349,23 @@ const dayOrders=off=>{const k=offsetDay(off);return S.orders.filter(o=>orderDay(
 const isToday=o=>orderDay(o)===offsetDay(0);
 
 /* ---------- views ---------- */
+// A little cashier with slicked-back hair and a big grin, for the "קופה ראשית" tab.
+const CASHIER=`<svg viewBox="0 0 24 24" aria-hidden="true" class="cashier"><g stroke="none">
+  <path d="M3.5 24 L5.6 19.6 Q12 17.4 18.4 19.6 L20.5 24Z" fill="#B3262E"/>
+  <path d="M9.2 18.2 L12 21.2 L14.8 18.2Z" fill="#8E1C22"/>
+  <rect x="10.2" y="15.6" width="3.6" height="3" rx="1" fill="#D9A47C"/>
+  <ellipse cx="6.9" cy="11.4" rx="1.1" ry="1.5" fill="#D9A47C"/><ellipse cx="17.1" cy="11.4" rx="1.1" ry="1.5" fill="#D9A47C"/>
+  <ellipse cx="12" cy="11" rx="5.1" ry="6" fill="#E6B58E"/>
+  <path d="M6.7 9.6 Q6.4 2.8 12 2.9 Q17.6 2.8 17.3 9.6 Q16.2 6.4 12 6.5 Q7.8 6.4 6.7 9.6Z" fill="#1F1A17"/>
+  <path d="M8.4 6.6 Q10.5 3.9 14.6 4.4 M9.6 7.2 Q12 5 15.6 5.6" stroke="#4A403A" stroke-width="0.5" fill="none" stroke-linecap="round"/>
+  <path d="M8.6 19 L10.6 21.6 M15.4 19 L13.4 21.6" stroke="#7A161C" stroke-width="0.6" fill="none" stroke-linecap="round"/>
+  <path d="M8.6 8.6 Q9.6 7.9 10.7 8.5 M13.3 8.5 Q14.4 7.9 15.4 8.6" stroke="#1F1A17" stroke-width="0.9" fill="none" stroke-linecap="round"/>
+  <circle cx="9.7" cy="10.2" r="0.6" fill="#1F1A17"/><circle cx="14.3" cy="10.2" r="0.6" fill="#1F1A17"/>
+  <path d="M12 10.6 L11.5 12.6 L12.4 12.8" stroke="#B9835F" stroke-width="0.6" fill="none" stroke-linecap="round"/>
+  <path d="M8.6 13.4 Q12 18.2 15.4 13.4Z" fill="#6E1E1E"/><path d="M8.9 13.5 L15.1 13.5 L14.6 14.5 L9.4 14.5Z" fill="#FFFFFF"/>
+</g></svg>`;
 const tabs=on=>{const w=pkWaiting().length;return `<nav class="tabs">
-  <button class="tab ${on==='home'?'on':''}" data-a="go" data-v="home">${ic('home')}<span>קופה</span></button>
+  <button class="tab ${on==='home'?'on':''}" data-a="go" data-v="home">${CASHIER}<span>קופה ראשית</span></button>
   <button class="tab ${on==='pickups'?'on':''}" data-a="go" data-v="pickups">${ic('bag')}<span>איסוף${w?` (${w})`:''}</span></button>
   <button class="tab ${on==='products'?'on':''}" data-a="go" data-v="products">${ic('leaf')}<span>מוצרים</span></button></nav>`};
 
