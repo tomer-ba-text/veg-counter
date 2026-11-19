@@ -289,6 +289,7 @@ let S={screen:PIN?'loading':'login',lastScreen:'',products:[],orders:[],cart:{},
 
 const prod=id=>S.products.find(p=>p.id===id);
 const cats=()=>[...new Set(S.products.map(p=>p.cat))];
+const byName=(a,b)=>a.name.localeCompare(b.name,'he');
 
 function mergeOrders(server){
   const ids=new Set(server.map(o=>o.uid));
@@ -489,7 +490,7 @@ products(){
   <header class="top"><div class="ttl" style="flex:1">מוצרים</div><button class="addp" data-a="editP" data-v="">${ic('plus')} ירק חדש</button></header>
   <div class="hint">ירק שמסומן ״אזל״ לא מופיע במסך המכירה ובדף הלקוחות, עד שמחזירים אותו.</div>
   <div class="scroll">${cats().map(c=>{
-    const ps=S.products.filter(p=>p.cat===c);
+    const ps=S.products.filter(p=>p.cat===c).sort(byName);
     return `<div class="cat">${esc(c)}</div><div class="group">${ps.map(p=>`<div class="row ${p.out?'out':''}">
       <button class="rowbtn" data-a="editP" data-v="${esc(p.id)}"><span class="main"><span class="nm">${esc(p.name)}</span>
       <span class="sub">${p.out?'<span class="badge">אזל</span>':`${money(p.price)} ${unitOf(p.unit).per}`}</span></span></button>
@@ -579,7 +580,7 @@ function dots(){return [0,1,2,3].map(i=>`<span class="dot ${i<S.pinBuf.length?'o
 function saleList(){
   const q=S.q.trim();
   const html=cats().map(c=>{
-    const ps=S.products.filter(p=>p.cat===c&&!p.out&&(!q||p.name.includes(q)));
+    const ps=S.products.filter(p=>p.cat===c&&!p.out&&(!q||p.name.includes(q))).sort(byName);
     if(!ps.length) return '';
     return `<div class="cat">${esc(c)}</div><div class="group">${ps.map(p=>{
       const n=S.cart[p.id]||0, kgItem=p.unit===KG, id=esc(p.id);
@@ -661,7 +662,9 @@ product(){
   <label class="fl" for="pName">שם</label><input class="in" id="pName" value="${esc(d.name)}" placeholder="עגבניות שרי" autocomplete="off">
   <label class="fl" for="pPrice">מחיר בשקלים</label><input class="in" id="pPrice" inputmode="decimal" value="${esc(d.price)}" placeholder="12" autocomplete="off">
   <span class="fl">נמכר לפי</span><div class="chips">${Object.keys(UNITS).map(u=>`<button class="chip ${d.unit===u?'on':''}" data-a="pUnit" data-v="${u}">${u}</button>`).join('')}</div>
-  <span class="fl">קטגוריה</span><div class="chips">${cs.map(c=>`<button class="chip ${d.cat===c?'on':''}" data-a="pCat" data-v="${esc(c)}">${esc(c)}</button>`).join('')}</div>
+  <span class="fl">קטגוריה</span><div class="chips">${cs.map(c=>`<button class="chip ${!d.catNew&&d.cat===c?'on':''}" data-a="pCat" data-v="${esc(c)}">${esc(c)}</button>`).join('')}
+    <button class="chip ${d.catNew?'on':''}" data-a="pCatNew">+ קטגוריה חדשה</button></div>
+  ${d.catNew?`<input class="in" id="pCatName" value="${esc(d.catName||'')}" placeholder="שם הקטגוריה, למשל פירות" autocomplete="off" style="margin-top:8px">`:''}
   <span class="fl">תמונה <span style="font-weight:400">· מופיעה רק בדף ההזמנה של הלקוחות</span></span>
   <div class="phrow">${d.photoBusy||d.photo===null?`<div class="phimg">${ic('sync')}</div>`:d.photo?`<img class="phimg" src="${d.photo}" alt="">`:`<div class="phimg">${ic('leaf')}</div>`}
     ${d.photoBusy?'<span class="sub">מכין את התמונה…</span>'
@@ -712,6 +715,7 @@ function syncRoundForm(){
 function syncDraft(){
   const n=document.getElementById('pName'); if(!n) return;
   const d=S.sheet.draft; d.name=n.value; d.price=document.getElementById('pPrice').value; d.out=document.getElementById('pOut').checked;
+  const cn=document.getElementById('pCatName'); if(cn) d.catName=cn.value;
 }
 
 /* ---------- rendering ---------- */
@@ -829,7 +833,8 @@ const A={
       :{name:'',price:'',unit:'צרור',cat:cats()[0]||'ירוקים ועלים',out:false}});
   },
   pUnit(v){S.sheet.draft.unit=v;render()},
-  pCat(v){S.sheet.draft.cat=v;render()},
+  pCat(v){S.sheet.draft.cat=v;S.sheet.draft.catNew=false;render()},
+  pCatNew(){S.sheet.draft.catNew=true;render();const i=document.getElementById('pCatName');if(i)i.focus()},
   pSave(){
     if(S.busy) return;
     syncDraft();
@@ -917,6 +922,13 @@ photoInput.addEventListener('change',()=>{
 const pSaveBase=A.pSave;
 A.pSave=()=>{
   if(S.sheet&&S.sheet.draft.photoBusy) return setErr('pErr','רגע, התמונה עוד בהכנה');
+  const d=S.sheet&&S.sheet.draft;
+  if(d&&d.catNew){
+    syncDraft();
+    const c=String(d.catName||'').trim().slice(0,40);
+    if(!c) return setErr('pErr','חסר שם לקטגוריה החדשה');
+    d.cat=c;
+  }
   pSaveBase();
 };
 

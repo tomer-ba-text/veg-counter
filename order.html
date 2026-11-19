@@ -205,7 +205,7 @@ start(){
 shop(){
   const L=cartLines(), n=L.length;
   return `<div class="app">${head(S.editing?'שינוי ההזמנה':'שלום '+esc(S.name.split(' ')[0]),S.editing?'done':'start')}
-  <div class="scroll">${cats().map(c=>`<div class="cat">${esc(c)}</div><div class="tiles">${S.products.filter(p=>p.cat===c).map(p=>{
+  <div class="scroll">${cats().map(c=>`<div class="cat">${esc(c)}</div><div class="tiles">${S.products.filter(p=>p.cat===c).sort((a,b)=>a.name.localeCompare(b.name,'he')).map(p=>{
     const q=S.cart[p.id]||0, isKg=p.unit===KG, id=esc(p.id), photo=/^data:image\/jpeg;base64,/.test(p.photo||'')?p.photo:'';
     return `<div class="tile ${q?'sel':''}">
       ${photo?`<button class="timg" data-a="inc" data-v="${id}" aria-label="הוספת ${esc(p.name)}"><img src="${photo}" alt="" loading="lazy"></button>`:''}
