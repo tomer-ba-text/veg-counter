@@ -487,13 +487,13 @@ orders(){
 products(){
   return `<div class="app">
   <header class="top"><div class="ttl" style="flex:1">מוצרים</div><button class="addp" data-a="editP" data-v="">${ic('plus')} ירק חדש</button></header>
-  <div class="hint">ירק שמסומן ״אזל להיום״ לא מופיע במסך המכירה, וחוזר לבד מחר בבוקר.</div>
+  <div class="hint">ירק שמסומן ״אזל״ לא מופיע במסך המכירה ובדף הלקוחות, עד שמחזירים אותו.</div>
   <div class="scroll">${cats().map(c=>{
     const ps=S.products.filter(p=>p.cat===c);
     return `<div class="cat">${esc(c)}</div><div class="group">${ps.map(p=>`<div class="row ${p.out?'out':''}">
       <button class="rowbtn" data-a="editP" data-v="${esc(p.id)}"><span class="main"><span class="nm">${esc(p.name)}</span>
-      <span class="sub">${p.out?'<span class="badge">אזל להיום</span>':`${money(p.price)} ${unitOf(p.unit).per}`}</span></span></button>
-      <button class="ibtn" data-a="toggleOut" data-v="${esc(p.id)}" aria-label="${p.out?'החזרה למכירה':'סימון אזל להיום'}">${ic(p.out?'eyeOff':'eye')}</button></div>`).join('')}</div>`;
+      <span class="sub">${p.out?'<span class="badge">אזל</span>':`${money(p.price)} ${unitOf(p.unit).per}`}</span></span></button>
+      <button class="ibtn" data-a="toggleOut" data-v="${esc(p.id)}" aria-label="${p.out?'החזרה למכירה':'סימון אזל'}">${ic(p.out?'eyeOff':'eye')}</button></div>`).join('')}</div>`;
   }).join('')||`<div class="empty">${ic('leaf')}<div>אין עדיין ירקות. מוסיפים עם ״ירק חדש״</div></div>`}
   <button class="logout" data-a="logoutAsk">יציאה מהאפליקציה</button></div>
   ${tabs('products')}</div>`;
@@ -666,7 +666,7 @@ product(){
   <div class="phrow">${d.photoBusy||d.photo===null?`<div class="phimg">${ic('sync')}</div>`:d.photo?`<img class="phimg" src="${d.photo}" alt="">`:`<div class="phimg">${ic('leaf')}</div>`}
     ${d.photoBusy?'<span class="sub">מכין את התמונה…</span>'
       :`<button class="btn out phbtn" data-a="pickPhoto">${d.photo?'החלפה':'הוספת תמונה'}</button>${d.photo?'<button class="btn redtext phbtn" data-a="pPhotoDel">הסרה</button>':''}`}</div>
-  <label class="tog"><input type="checkbox" id="pOut" ${d.out?'checked':''}> אזל להיום</label>
+  <label class="tog"><input type="checkbox" id="pOut" ${d.out?'checked':''}> אזל</label>
   <div class="err" id="pErr"></div>
   <button class="btn pri" data-a="pSave" ${S.busy?'aria-busy="true"':''}>שמירה</button>
   ${isNew?'':`<button class="btn redtext" data-a="pDel">${S.sheet.armed?'לחיצה נוספת מוחקת את הירק':'מחיקת הירק'}</button>`}`;
@@ -817,7 +817,7 @@ const A={
   toggleOut(id){
     const p=prod(id); if(!p) return;
     p.out=!p.out; if(p.out) delete S.cart[id];
-    render(); toast(p.out?`${p.name} סומן ״אזל להיום״`:`${p.name} חזר למכירה`);
+    render(); toast(p.out?`${p.name} סומן ״אזל״`:`${p.name} חזר למכירה`);
     call('setOut',PIN,id,p.out).then(saveCache).catch(e=>{
       if(isPinErr(e)) return logout('הקוד השתנה. מקלידים את הקוד החדש');
       p.out=!p.out; softRender(); toast('לא נשמר: '+errText(e),true);
