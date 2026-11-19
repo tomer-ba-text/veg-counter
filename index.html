@@ -197,6 +197,7 @@ select.in{appearance:auto}
 <body>
 <div class="shell">
   <div id="view"></div>
+  <input type="file" id="photoInput" accept="image/*" hidden>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 </div>
 
@@ -662,10 +663,9 @@ product(){
   <span class="fl">נמכר לפי</span><div class="chips">${Object.keys(UNITS).map(u=>`<button class="chip ${d.unit===u?'on':''}" data-a="pUnit" data-v="${u}">${u}</button>`).join('')}</div>
   <span class="fl">קטגוריה</span><div class="chips">${cs.map(c=>`<button class="chip ${d.cat===c?'on':''}" data-a="pCat" data-v="${esc(c)}">${esc(c)}</button>`).join('')}</div>
   <span class="fl">תמונה <span style="font-weight:400">· מופיעה רק בדף ההזמנה של הלקוחות</span></span>
-  <div class="phrow">${d.photo===null?`<div class="phimg">${ic('sync')}</div>`:d.photo?`<img class="phimg" src="${d.photo}" alt="">`:`<div class="phimg">${ic('leaf')}</div>`}
-    <label for="pPhoto" class="btn out phbtn">${d.photo?'החלפה':'הוספת תמונה'}</label>
-    ${d.photo?'<button class="btn redtext phbtn" data-a="pPhotoDel">הסרה</button>':''}
-    <input type="file" id="pPhoto" accept="image/*" hidden></div>
+  <div class="phrow">${d.photoBusy||d.photo===null?`<div class="phimg">${ic('sync')}</div>`:d.photo?`<img class="phimg" src="${d.photo}" alt="">`:`<div class="phimg">${ic('leaf')}</div>`}
+    ${d.photoBusy?'<span class="sub">מכין את התמונה…</span>'
+      :`<button class="btn out phbtn" data-a="pickPhoto">${d.photo?'החלפה':'הוספת תמונה'}</button>${d.photo?'<button class="btn redtext phbtn" data-a="pPhotoDel">הסרה</button>':''}`}</div>
   <label class="tog"><input type="checkbox" id="pOut" ${d.out?'checked':''}> אזל להיום</label>
   <div class="err" id="pErr"></div>
   <button class="btn pri" data-a="pSave" ${S.busy?'aria-busy="true"':''}>שמירה</button>
@@ -897,17 +897,28 @@ A.editP=id=>{
   const d=S.sheet.draft;
   if(!id){d.photo='';render();return}
   d.photo=null; render();
-  call('getPhoto',PIN,id).then(u=>{if(S.sheet&&S.sheet.type==='product'&&S.sheet.pid===id&&!d.photoChanged){d.photo=u;render()}})
-    .catch(()=>{if(!d.photoChanged){d.photo='';render()}});
+  // A photo picked meanwhile wins over the one still loading from the server.
+  const mine=()=>S.sheet&&S.sheet.type==='product'&&S.sheet.pid===id&&!d.photoChanged&&!d.photoBusy;
+  call('getPhoto',PIN,id).then(u=>{if(mine()){d.photo=u;render()}}).catch(()=>{if(mine()){d.photo='';render()}});
 };
 A.pPhotoDel=()=>{const d=S.sheet.draft;d.photo='';d.photoChanged=true;render()};
-view.addEventListener('change',e=>{
-  if(e.target.id!=='pPhoto'||!e.target.files||!e.target.files[0]||!S.sheet||S.sheet.type!=='product') return;
-  const d=S.sheet.draft, prev=d.photo;
-  syncDraft(); d.photo=null; render();
-  shrinkPhoto(e.target.files[0]).then(u=>{d.photo=u;d.photoChanged=true;render()})
-    .catch(err=>{d.photo=prev||'';render();setErr('pErr',err.message)});
+// The file input lives outside the redrawn screen, so a redraw while the picker is open can't lose the photo.
+const photoInput=document.getElementById('photoInput');
+A.pickPhoto=()=>{photoInput.value='';photoInput.click()};
+photoInput.addEventListener('change',()=>{
+  const file=photoInput.files&&photoInput.files[0];
+  if(!file||!S.sheet||S.sheet.type!=='product') return;
+  const d=S.sheet.draft;
+  syncDraft(); d.photoBusy=true; render();
+  let err='';
+  shrinkPhoto(file).then(u=>{d.photo=u;d.photoChanged=true}).catch(e=>{err=e.message})
+    .finally(()=>{d.photoBusy=false;if(d.photo===null)d.photo='';render();if(err)setErr('pErr',err)});
 });
+const pSaveBase=A.pSave;
+A.pSave=()=>{
+  if(S.sheet&&S.sheet.draft.photoBusy) return setErr('pErr','רגע, התמונה עוד בהכנה');
+  pSaveBase();
+};
 
 /* ---------- איסוף: actions ---------- */
 const pkFail=(e,errId)=>{

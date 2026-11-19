@@ -312,6 +312,16 @@ view.addEventListener('click',e=>{const el=e.target.closest('[data-a]');if(!el)r
   if(a==='scrim'){if(e.target===el)A.close();return}
   A[a]&&A[a](el.dataset.v,el)});
 window.addEventListener('hashchange',boot);
+// Coming back to the page picks up new photos, prices and sold-out items without losing the basket.
+document.addEventListener('visibilitychange',()=>{
+  if(document.visibilityState!=='visible'||!S.round||!['start','shop'].includes(S.screen)) return;
+  call('pubRound',S.round.id).then(d=>{
+    if(d.missing||!['start','shop'].includes(S.screen)) return;
+    S.round=d.round; S.products=d.products;
+    Object.keys(S.cart).forEach(id=>{if(!S.products.some(p=>p.id===id)) delete S.cart[id]});
+    S.screen=d.round.closed?'closed':S.screen; render();
+  }).catch(()=>{});
+});
 boot();
 </script>
 </body>
